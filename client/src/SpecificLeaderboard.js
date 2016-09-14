@@ -5,12 +5,19 @@ import {
   View
 } from 'react-native';
 
+const FBSDK = require('react-native-fbsdk');
+const {
+  LoginButton,
+  AccessToken
+} = FBSDK;
+
 import Styles from './Styles';
 
 export default class SpecificLeaderboard extends Component {
   render() {
     return (
       <View style={Styles.container}>
+        <LoginButton />
         <Text style={Styles.welcome}>
           Specific Leaderboard will go here
         </Text>
