@@ -1,19 +1,15 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
   Text,
+  TouchableHighlight,
   View
 } from 'react-native';
 
+import Styles from './Styles';
+
 export default class GenericLeaderboard extends Component {
   constructor(props) {
+
     super(props);
 
     this.state = {
@@ -21,6 +17,10 @@ export default class GenericLeaderboard extends Component {
     };
 
     let that = this;
+
+    this.onPressButton = function() {
+        that.props.navigator.push({id: "specific"});
+      };
 
     (async function() {
     try {
@@ -34,40 +34,21 @@ export default class GenericLeaderboard extends Component {
   }
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
+      <View style={Styles.container}>
+        <Text style={Styles.welcome}>
           Welcome to React Native!
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
+        <TouchableHighlight onPress={this.onPressButton}>
+          <Text style={Styles.button}>Click Me</Text>
+        </TouchableHighlight>
+        <Text style={Styles.instructions}>
           Double tap R on your keyboard to reload,{'\n'}
           Shake or press menu button for dev menu
         </Text>
-        <Text style={styles.instructions}>
+        <Text style={Styles.instructions}>
           Making a test HTTP request. Result: {this.state.text}
         </Text>
       </View>
     );
   }
 }
-
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});

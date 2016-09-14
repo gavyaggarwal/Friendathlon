@@ -1,18 +1,22 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
   Text,
+  TouchableHighlight,
   View
 } from 'react-native';
 
-class SpecificLeaderboard extends Component {
+import Styles from './Styles';
+
+export default class SpecificLeaderboard extends Component {
   render() {
     return (
-      <View>
-        <Text>
+      <View style={Styles.container}>
+        <Text style={Styles.welcome}>
           Specific Leaderboard will go here
         </Text>
+        <TouchableHighlight onPress={this.props.navigator.pop}>
+          <Text style={Styles.button}>Back</Text>
+        </TouchableHighlight>
       </View>
     );
   }
