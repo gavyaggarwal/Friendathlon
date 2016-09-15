@@ -1,14 +1,16 @@
 //  OpenShift sample Node application
-var express = require('express'),
-    fs      = require('fs'),
-    app     = express(),
-    eps     = require('ejs'),
-    morgan  = require('morgan');
+var express    = require('express'),
+    bodyParser = require('body-parser'),
+    fs         = require('fs'),
+    app        = express(),
+    eps        = require('ejs'),
+    morgan     = require('morgan');
 
 Object.assign=require('object-assign')
 
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
+app.use(bodyParser.json());
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
@@ -61,6 +63,15 @@ var initDb = function(callback) {
   });
 };
 
+function debugDumpDB() {
+  var col = db.collection('users');
+  col.find().toArray(function(err, documents) {
+
+    console.log(documents);
+
+  });
+}
+
 function verifyDB(req, res, next) {
     if (!db) {
       initDb(function(err){});
@@ -69,7 +80,7 @@ function verifyDB(req, res, next) {
       req.db = db;
       next();
     } else {
-      res.send(JSON.stringify({"success": false}));
+      res.status(500).send(JSON.stringify({"success": false}));
     }
 }
 
@@ -83,7 +94,19 @@ app.get('/test', verifyDB, function (req, res) {
 });
 
 app.post('/updateProfile', verifyDB, function (req, res) {
-  sendObject(res, {"appName":"Friendathlon"});
+  var col = req.db.collection('users');
+  col.updateOne(
+    { "id": req.body.id },
+    {
+      $set: { "friends": req.body.friends },
+      $currentDate: { "lastModified": true }
+    },
+    {
+      upsert: true
+    }, function(err, results) {
+      sendObject(res, {});
+
+  });
 });
 
 app.get('/', verifyDB, function (req, res) {
@@ -104,7 +127,7 @@ app.get('/pagecount', verifyDB, function (req, res) {
 // error handling
 app.use(function(err, req, res, next){
   console.error(err.stack);
-  res.status(500).send('Something bad happened!');
+  res.status(500).send(JSON.stringify({"success": false}));
 });
 
 initDb(function(err){
