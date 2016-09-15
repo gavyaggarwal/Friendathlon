@@ -4,13 +4,17 @@
  * /updateProfile (POST) - Call this everytime the app is launched
  * Request Body: {"id": <FBID>, "friends":[<FBFRIENDID>,...]}
  *
- * /genericLeaderboard (GET) - Call this to get generic leaderboards for a user
+ * /genericLeaderboard (GET) - Returns generic leaderboards for a user
  * Request Parameters: id=<FBID>
+ *
+ * /specificLeaderboard (GET) - Returns specific leaderboard for a user/activity
+ * Request Parameters: id=<FBID>&activity=<activity>
  */
 
 var express    = require('express'),
     bodyParser = require('body-parser'),
     fs         = require('fs'),
+    assert     = require('assert');
     app        = express(),
     eps        = require('ejs'),
     morgan     = require('morgan');
@@ -118,6 +122,7 @@ app.post('/updateProfile', verifyDB, function (req, res) {
 });
 
 app.get('/genericLeaderboard', verifyDB, function (req, res) {
+  assert(req.query.id != undefined);
   sendObject(res, {
     leaderboards: [
       {
@@ -155,6 +160,63 @@ app.get('/genericLeaderboard', verifyDB, function (req, res) {
           rank: 12,
           total: 24
         }
+      }
+    ]
+  });
+});
+
+app.get('/specificLeaderboard', verifyDB, function (req, res) {
+  assert(req.query.id != undefined);
+  assert(req.query.activity != undefined);
+  sendObject(res, {
+    stats: {
+      friendRank: 3,
+      friendTotal: 19,
+      ribbonOnTrack: true,
+      percentile: 5,
+      totalDistance: 38.1,
+      averageDistance: 2
+    },
+    friends: [
+      {
+        rank: 1,
+        name: "Gavy Aggarwal",
+        location: "Newark, DE",
+        distance: 5.7,
+        progress: 1,
+        me: false
+      },
+      {
+        rank: 2,
+        name: "Abirami Kurinchi-Vendhan",
+        location: "Hillsboro, OR",
+        distance: 4.9,
+        progress: 0.85,
+        me: false
+      },
+      {
+        rank: 3,
+        name: "John Doe",
+        location: "Austin, TX",
+        distance: 4.0,
+        progress: 0.6,
+        me: true
+      },
+      {
+        rank: 4,
+        name: "Sarah Johnson",
+        location: "Pasadena, CA",
+        distance: 1.7,
+        progress: 0.4,
+        me: false
+      },
+      {
+        rank: 5,
+        name: "Jacob Smith",
+        location: "Seattle, WA",
+        distance: 0.2,
+        progress: 0.1,
+        me: false
       }
     ]
   });
