@@ -61,15 +61,16 @@ var initDb = function(callback) {
   });
 };
 
-function runIfDB(func, res) {
-  if (!db) {
-    initDb(function(err){});
-  }
-  if (db) {
-    func();
-  } else {
-    res.send(JSON.stringify({"success": false}));
-  }
+function verifyDB(req, res, next) {
+    if (!db) {
+      initDb(function(err){});
+    }
+    if (db) {
+      req.db = db;
+      next();
+    } else {
+      res.send(JSON.stringify({"success": false}));
+    }
 }
 
 function sendObject(res, obj) {
@@ -77,29 +78,27 @@ function sendObject(res, obj) {
   res.send(JSON.stringify(obj));
 }
 
-app.get('/test', function (req, res) {
-  runIfDB(function() {
-    sendObject(res, {"appName":"Friendathlon"});
-  }, res);
+app.get('/test', verifyDB, function (req, res) {
+  sendObject(res, {"appName":"Friendathlon"});
 });
 
-app.get('/', function (req, res) {
-  runIfDB(function() {
-    var col = db.collection('counts');
-    // Create a document with request IP and current time of request
-    col.insert({ip: req.ip, date: Date.now()});
-    col.count(function(err, count){
-      res.send(JSON.stringify({ pageCountMessage : count, dbInfo: dbDetails }));
-    });
-  }, res);
+app.post('/updateProfile', verifyDB, function (req, res) {
+  sendObject(res, {"appName":"Friendathlon"});
 });
 
-app.get('/pagecount', function (req, res) {
-  runIfDB(function() {
-    db.collection('counts').count(function(err, count ){
-      res.send('{ pageCount: ' + count + '}');
-    });
-  }, res);
+app.get('/', verifyDB, function (req, res) {
+  var col = req.db.collection('counts');
+  // Create a document with request IP and current time of request
+  col.insert({ip: req.ip, date: Date.now()});
+  col.count(function(err, count){
+    res.send(JSON.stringify({ pageCountMessage : count, dbInfo: dbDetails }));
+  });
+});
+
+app.get('/pagecount', verifyDB, function (req, res) {
+  req.db.collection('counts').count(function(err, count ){
+    res.send('{ pageCount: ' + count + '}');
+  });
 });
 
 // error handling
