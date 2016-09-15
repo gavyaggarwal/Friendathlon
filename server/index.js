@@ -1,4 +1,13 @@
-//  OpenShift sample Node application
+/*
+ * Available APIs:
+ *
+ * /updateProfile (POST) - Call this everytime the app is launched
+ * Request Body: {"id": <FBID>, "friends":[<FBFRIENDID>,...]}
+ *
+ * /genericLeaderboard (GET) - Call this to get generic leaderboards for a user
+ * Request Parameters: id=<FBID>
+ */
+
 var express    = require('express'),
     bodyParser = require('body-parser'),
     fs         = require('fs'),
@@ -105,7 +114,49 @@ app.post('/updateProfile', verifyDB, function (req, res) {
       upsert: true
     }, function(err, results) {
       sendObject(res, {});
+  });
+});
 
+app.get('/genericLeaderboard', verifyDB, function (req, res) {
+  sendObject(res, {
+    leaderboards: [
+      {
+        activity: "walk",
+        daily: {
+          distance: 3.4,
+          rank: 3,
+          total: 5
+        },
+        weekly: {
+          distance: 14,
+          rank: 5,
+          total: 19
+        },
+        monthly: {
+          distance: 39,
+          rank: 8,
+          total: 24
+        }
+      },
+      {
+        activity: "run",
+        daily: {
+          distance: 0.5,
+          rank: 4,
+          total: 5
+        },
+        weekly: {
+          distance: 0.5,
+          rank: 12,
+          total: 19
+        },
+        monthly: {
+          distance: 4,
+          rank: 12,
+          total: 24
+        }
+      }
+    ]
   });
 });
 
