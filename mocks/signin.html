@@ -26,61 +26,50 @@
         overflow-x: scroll;
         white-space: nowrap;
     }
-    .card {
-        margin: 10px;
-        height: 546px;
-        width: 200px;
-        display: inline-block;
-        text-align: center;
-        padding: 10px 0px;
-        vertical-align: top;
-        color: white;
-        border-radius: 5px;
-        border: 1px solid black;
-    }
-    h3 {
-        margin: 0px;
-        font-weight: 500;
-        font-size: 1.4em;
-    }
-    h5 {
-        margin: 0px;
-        font-weight: 400;
-        font-size: 1.2em;
-    }
-    hr {
-        height: 1px;
-        width: 90%;
-        background: #fff;
-        border-width: 0px;
-    }
-    p {
-        font-size: 0.9em;
-        font-weight: 500;
-        color: #666;
-    }
-    span, a {
-        font-size: 0.9em;
-    }
     div {
         text-align: center;
+        height: 166px;
+        display: table-row;
     }
     button {
-        width: 200px;
+        width: 80%;
+        font-family: 'Alegreya Sans', sans-serif;
+        color: #fff;
+        height: 50px;
+        -webkit-border-radius: 8;
+        -moz-border-radius: 8;
+        border-radius: 8px;
+        font-size: 15px;
+        padding: 10px 20px 10px 20px;
+        text-decoration: none
+    }
+    img {
+        height: 20px;
+        width: 20px;
+        padding-right: 10px;
+    }
+    button img, p {
+        vertical-align: middle;
     }
   </style>
 </head>
 <body>
     <div>
-        <p> Thanks for downloading our app! </p>
+        <p style = 'margin-top: 100px;'> Thanks for downloading our app! </p>
     </div>
     <div>
-        <p> First connect with Facebook: </p>
-        <button> Log in with Facebook </button>
+        <p> Let's start by finding your friends: </p>
+        <button style='background-color: #3b5998;'>
+            <img src="fbLogo.png" class='left'></i>
+            Login with Facebook
+        </button>
     </div>
     <div>
-        <p> Then connect with your Moves App: </p>
-        <button> Connect to Moves </button>
+        <p> And getting your Moves: </p>
+        <button style='background-color: #5ce53c;'>
+            <img src="movesLogo.png" class='left'></i>
+            Connect with Moves
+        </button>
     </div>
     <div>
         And you'll be set to compete with your friends!
