@@ -2,7 +2,11 @@
  * Available APIs:
  *
  * /updateProfile (POST) - Call this everytime the app is launched
- * Request Body: {"id": <FBID>, "friends":[<FBFRIENDID>,...]}
+ * Request Body: {
+ *                 "id": <FBID>,
+ *                 "friends": [<FBFRIENDID>,...],
+ *                 "name": <FB NAME>
+ *               }
  *
  * /genericLeaderboard (GET) - Returns generic leaderboards for a user
  * Request Parameters: id=<FBID>
@@ -17,9 +21,12 @@ var express    = require('express'),
     assert     = require('assert');
     app        = express(),
     eps        = require('ejs'),
-    morgan     = require('morgan');
+    morgan     = require('morgan'),
+    oauth      = require('oauth');
 
-Object.assign=require('object-assign')
+require('dotenv').config({silent: true});
+
+Object.assign=require('object-assign');
 
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
@@ -28,7 +35,9 @@ app.use(bodyParser.json());
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
     mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
-    mongoURLLabel = "";
+    mongoURLLabel = "",
+    clientId = process.env.MOVES_CLIENT_ID,
+    clientSecret = process.env.MOVES_CLIENT_SECRET;
 
 if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
   var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
@@ -102,16 +111,18 @@ function sendObject(res, obj) {
   res.send(JSON.stringify(obj));
 }
 
-app.get('/test', verifyDB, function (req, res) {
-  sendObject(res, {"appName":"Friendathlon"});
-});
-
 app.post('/updateProfile', verifyDB, function (req, res) {
+  assert(req.body.id);
+  assert(req.body.friends);
+  assert(req.body.name);
   var col = req.db.collection('users');
   col.updateOne(
     { "id": req.body.id },
     {
-      $set: { "friends": req.body.friends },
+      $set: {
+        "friends": req.body.friends,
+        "name": req.body.name
+      },
       $currentDate: { "lastModified": true }
     },
     {
@@ -222,7 +233,56 @@ app.get('/specificLeaderboard', verifyDB, function (req, res) {
   });
 });
 
+app.get('/auth', function (req, res) {
+  var oauth2 = new oauth.OAuth2(
+    clientId,
+    clientSecret,
+    'https://api.moves-app.com/',
+    null,
+    'oauth/v1/access_token',
+    null);
+
+  oauth2.getOAuthAccessToken(
+    req.query.code,
+    {
+      'grant_type': 'authorization_code',
+      'redirect_uri': req.protocol + '://' + req.get('host') + '/auth',
+      'state': req.query.state
+    },
+    function (e, access_token, refresh_token, results) {
+      if (e) {
+        console.log("EA", e);
+        //res.end(e);
+        res.redirect('friendathlon://');
+      } else if (results.error) {
+        console.log("TKNERR", results);
+        //res.end(JSON.stringify(results));
+        res.redirect('friendathlon://');
+      } else {
+        console.log('Obtained access_token: ', access_token);
+
+        var col = req.db.collection('users');
+        col.updateOne(
+          { "id": req.query.state },
+          {
+            $set: {
+              "accessToken": access_token,
+              "refreshToken": refresh_token
+            },
+            $currentDate: { "lastModified": true }
+          },
+          {
+            upsert: true
+          }, function(err, results) {
+            res.redirect('friendathlon://');
+        });
+      }
+  });
+
+});
+
 app.get('/', verifyDB, function (req, res) {
+  console.log(req.protocol + '://' + req.get('host') + '/token');
   var col = req.db.collection('counts');
   // Create a document with request IP and current time of request
   col.insert({ip: req.ip, date: Date.now()});
