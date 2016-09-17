@@ -121,7 +121,8 @@ app.post('/updateProfile', verifyDB, function (req, res) {
     {
       $set: {
         "friends": req.body.friends,
-        "name": req.body.name
+        "name": req.body.name,
+        "location": req.body.location
       },
       $currentDate: { "lastModified": true }
     },
@@ -282,6 +283,7 @@ app.get('/auth', function (req, res) {
 });
 
 app.get('/', verifyDB, function (req, res) {
+  debugDumpDB();
   console.log(req.protocol + '://' + req.get('host') + '/token');
   var col = req.db.collection('counts');
   // Create a document with request IP and current time of request
@@ -310,4 +312,4 @@ initDb(function(err){
 app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
 
-module.exports = app ;
+module.exports = app;
