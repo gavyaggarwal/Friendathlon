@@ -5,7 +5,8 @@
  * Request Body: {
  *                 "id": <FBID>,
  *                 "friends": [<FBFRIENDID>,...],
- *                 "name": <FB NAME>
+ *                 "name": <FB NAME>,
+ *                 "location": <LOCATION STRING (eg. Newark, DE)>
  *               }
  *
  * /genericLeaderboard (GET) - Returns generic leaderboards for a user
@@ -60,6 +61,14 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
 } else {
   mongoURL = "mongodb://localhost:27017/friendathlon";
 }
+
+var oauth2 = new oauth.OAuth2(
+  clientId,
+  clientSecret,
+  'https://api.moves-app.com/',
+  null,
+  'oauth/v1/access_token',
+  null);
 
 var db = null,
     dbDetails = new Object();
@@ -234,15 +243,7 @@ app.get('/specificLeaderboard', verifyDB, function (req, res) {
   });
 });
 
-app.get('/auth', function (req, res) {
-  var oauth2 = new oauth.OAuth2(
-    clientId,
-    clientSecret,
-    'https://api.moves-app.com/',
-    null,
-    'oauth/v1/access_token',
-    null);
-
+app.get('/auth', verifyDB, function (req, res) {
   oauth2.getOAuthAccessToken(
     req.query.code,
     {
@@ -285,12 +286,26 @@ app.get('/auth', function (req, res) {
 app.get('/', verifyDB, function (req, res) {
   debugDumpDB();
   console.log(req.protocol + '://' + req.get('host') + '/token');
+
+
+
+
+  oauth2.get("https://api.moves-app.com/api/1.1/user/summary/daily/20160805", "Fa_Aua20QI8rkRt1OqD8GMxl8Q7Jg2VuwJwHWRiIqetp2yu4h2mqu0kIQf8G4wxE", function(err, result, response) {
+    if (err) {
+      console.log("error", err);
+    }
+    else {
+      sendObject(res, JSON.parse(result));
+    }
+  });
+
+  /*
   var col = req.db.collection('counts');
   // Create a document with request IP and current time of request
   col.insert({ip: req.ip, date: Date.now()});
   col.count(function(err, count){
     res.send(JSON.stringify({ pageCountMessage : count, dbInfo: dbDetails }));
-  });
+  });*/
 });
 
 app.get('/pagecount', verifyDB, function (req, res) {
