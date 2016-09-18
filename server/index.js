@@ -23,11 +23,10 @@ var express    = require('express'),
     app        = express(),
     eps        = require('ejs'),
     morgan     = require('morgan'),
-    oauth      = require('oauth'),
     db         = require('./db.js'),
+    config     = require('./config.js'),
     cron       = require('./cron.js');
 
-require('dotenv').config({silent: true});
 
 Object.assign=require('object-assign');
 
@@ -36,17 +35,9 @@ app.use(morgan('combined'))
 app.use(bodyParser.json());
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
-    clientId = process.env.MOVES_CLIENT_ID,
-    clientSecret = process.env.MOVES_CLIENT_SECRET;
+    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
-var oauth2 = new oauth.OAuth2(
-  clientId,
-  clientSecret,
-  'https://api.moves-app.com/',
-  null,
-  'oauth/v1/access_token',
-  null);
+
 
 function verifyDB(req, res, next) {
     if (db.getInstance()) {
@@ -186,7 +177,7 @@ app.get('/specificLeaderboard', verifyDB, function (req, res) {
 });
 
 app.get('/auth', verifyDB, function (req, res) {
-  oauth2.getOAuthAccessToken(
+  config.oauth.getOAuthAccessToken(
     req.query.code,
     {
       'grant_type': 'authorization_code',
@@ -230,7 +221,7 @@ app.get('/', verifyDB, function (req, res) {
   console.log(req.protocol + '://' + req.get('host') + '/token');
 
 
-  oauth2.get("https://api.moves-app.com/api/1.1/user/summary/daily/20160805", "Fa_Aua20QI8rkRt1OqD8GMxl8Q7Jg2VuwJwHWRiIqetp2yu4h2mqu0kIQf8G4wxE", function(err, result, response) {
+  config.oauth.get("https://api.moves-app.com/api/1.1/user/summary/daily/20160805", "Fa_Aua20QI8rkRt1OqD8GMxl8Q7Jg2VuwJwHWRiIqetp2yu4h2mqu0kIQf8G4wxE", function(err, result, response) {
     if (err) {
       console.log("error", err);
     } else {
