@@ -24,7 +24,8 @@ var express    = require('express'),
     eps        = require('ejs'),
     morgan     = require('morgan'),
     oauth      = require('oauth'),
-    db         = require('./db.js');
+    db         = require('./db.js'),
+    cron       = require('./cron.js');
 
 require('dotenv').config({silent: true});
 
@@ -39,8 +40,6 @@ var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     clientId = process.env.MOVES_CLIENT_ID,
     clientSecret = process.env.MOVES_CLIENT_SECRET;
 
-
-
 var oauth2 = new oauth.OAuth2(
   clientId,
   clientSecret,
@@ -48,25 +47,6 @@ var oauth2 = new oauth.OAuth2(
   null,
   'oauth/v1/access_token',
   null);
-
-(function() {
-  function task() {
-    if (db.getInstance()) {
-      console.log("task");
-    }
-  }
-
-  setInterval(task, 6000);
-})();
-
-function debugDumpDB() {
-  var col = db.getInstance().collection('users');
-  col.find().toArray(function(err, documents) {
-
-    console.log(documents);
-
-  });
-}
 
 function verifyDB(req, res, next) {
     if (db.getInstance()) {
@@ -246,15 +226,14 @@ app.get('/auth', verifyDB, function (req, res) {
 });
 
 app.get('/', verifyDB, function (req, res) {
-  debugDumpDB();
+  db.debugDump();
   console.log(req.protocol + '://' + req.get('host') + '/token');
 
 
   oauth2.get("https://api.moves-app.com/api/1.1/user/summary/daily/20160805", "Fa_Aua20QI8rkRt1OqD8GMxl8Q7Jg2VuwJwHWRiIqetp2yu4h2mqu0kIQf8G4wxE", function(err, result, response) {
     if (err) {
       console.log("error", err);
-    }
-    else {
+    } else {
       sendObject(res, JSON.parse(result));
     }
   });
@@ -282,5 +261,7 @@ app.use(function(err, req, res, next){
 
 app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
+
+cron.start();
 
 module.exports = app;

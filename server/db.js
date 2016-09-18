@@ -58,5 +58,11 @@ module.exports = {
       initDb(function(err){});
     }
     return db;
+  },
+  debugDump: function() {
+    var col = db.collection('users');
+    col.find().toArray(function(err, documents) {
+      console.log(documents);
+    });
   }
 }
