@@ -19,11 +19,12 @@
 var express    = require('express'),
     bodyParser = require('body-parser'),
     fs         = require('fs'),
-    assert     = require('assert');
+    assert     = require('assert'),
     app        = express(),
     eps        = require('ejs'),
     morgan     = require('morgan'),
-    oauth      = require('oauth');
+    oauth      = require('oauth'),
+    db         = require('./db.js');
 
 require('dotenv').config({silent: true});
 
@@ -35,32 +36,10 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
-    mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
-    mongoURLLabel = "",
     clientId = process.env.MOVES_CLIENT_ID,
     clientSecret = process.env.MOVES_CLIENT_SECRET;
 
-if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
-  var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
-      mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
-      mongoPort = process.env[mongoServiceName + '_SERVICE_PORT'],
-      mongoDatabase = process.env[mongoServiceName + '_DATABASE'],
-      mongoPassword = process.env[mongoServiceName + '_PASSWORD']
-      mongoUser = process.env[mongoServiceName + '_USER'];
 
-  if (mongoHost && mongoPort && mongoDatabase) {
-    mongoURLLabel = mongoURL = 'mongodb://';
-    if (mongoUser && mongoPassword) {
-      mongoURL += mongoUser + ':' + mongoPassword + '@';
-    }
-    // Provide UI label that excludes user id and pw
-    mongoURLLabel += mongoHost + ':' + mongoPort + '/' + mongoDatabase;
-    mongoURL += mongoHost + ':' +  mongoPort + '/' + mongoDatabase;
-
-  }
-} else {
-  mongoURL = "mongodb://localhost:27017/friendathlon";
-}
 
 var oauth2 = new oauth.OAuth2(
   clientId,
@@ -70,32 +49,18 @@ var oauth2 = new oauth.OAuth2(
   'oauth/v1/access_token',
   null);
 
-var db = null,
-    dbDetails = new Object();
-
-var initDb = function(callback) {
-  if (mongoURL == null) return;
-
-  var mongodb = require('mongodb');
-  if (mongodb == null) return;
-
-  mongodb.connect(mongoURL, function(err, conn) {
-    if (err) {
-      callback(err);
-      return;
+(function() {
+  function task() {
+    if (db.getInstance()) {
+      console.log("task");
     }
+  }
 
-    db = conn;
-    dbDetails.databaseName = db.databaseName;
-    dbDetails.url = mongoURLLabel;
-    dbDetails.type = 'MongoDB';
-
-    console.log('Connected to MongoDB at: %s', mongoURL);
-  });
-};
+  setInterval(task, 6000);
+})();
 
 function debugDumpDB() {
-  var col = db.collection('users');
+  var col = db.getInstance().collection('users');
   col.find().toArray(function(err, documents) {
 
     console.log(documents);
@@ -104,11 +69,8 @@ function debugDumpDB() {
 }
 
 function verifyDB(req, res, next) {
-    if (!db) {
-      initDb(function(err){});
-    }
-    if (db) {
-      req.db = db;
+    if (db.getInstance()) {
+      req.db = db.getInstance();
       next();
     } else {
       res.status(500).send(JSON.stringify({"success": false}));
@@ -288,8 +250,6 @@ app.get('/', verifyDB, function (req, res) {
   console.log(req.protocol + '://' + req.get('host') + '/token');
 
 
-
-
   oauth2.get("https://api.moves-app.com/api/1.1/user/summary/daily/20160805", "Fa_Aua20QI8rkRt1OqD8GMxl8Q7Jg2VuwJwHWRiIqetp2yu4h2mqu0kIQf8G4wxE", function(err, result, response) {
     if (err) {
       console.log("error", err);
@@ -318,10 +278,6 @@ app.get('/pagecount', verifyDB, function (req, res) {
 app.use(function(err, req, res, next){
   console.error(err.stack);
   res.status(500).send(JSON.stringify({"success": false}));
-});
-
-initDb(function(err){
-  console.log('Error connecting to Mongo. Message:\n'+err);
 });
 
 app.listen(port, ip);
