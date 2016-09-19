@@ -14,7 +14,10 @@ class ActivityCard extends Component {
     return (
     <View style={Styles.card}>
       <View style={Styles.cardHead}>
-        <Text>
+        <Image
+          source={require('../../mocks/movesLogo.png')}
+        />
+        <Text style={Styles.cardHeadText}>
           {this.props.activity}
         </Text>
       </View>
@@ -54,16 +57,18 @@ export default class GenericLeaderboard extends Component {
           <Text style={Styles.toolbarTitle}>Friendathlon Leaderboards</Text>
           <Text style={Styles.toolbarButton}></Text>
         </View>
-        <ScrollView horizontal style={{flex:1}}>
-          <ActivityCard activity='Walking'>
-          </ActivityCard>
-          <ActivityCard activity='Running'>
-          </ActivityCard>
-          <ActivityCard activity='Cycling'>
-          </ActivityCard>
-          <ActivityCard activity='Kayaking'>
-          </ActivityCard>
-        </ScrollView>
+        <View style={{flex:1}}>
+          <ScrollView horizontal style={{flex:1}}>
+            <ActivityCard activity='Walking'>
+            </ActivityCard>
+            <ActivityCard activity='Running'>
+            </ActivityCard>
+            <ActivityCard activity='Cycling'>
+            </ActivityCard>
+            <ActivityCard activity='Kayaking'>
+            </ActivityCard>
+          </ScrollView>
+        </View>
       </View>
     );
   }

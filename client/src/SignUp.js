@@ -9,8 +9,10 @@ import {
 
 const FBSDK = require('react-native-fbsdk');
 const {
-  LoginButton,
-  AccessToken
+  LoginManager,
+  AccessToken,
+  GraphRequest,
+  GraphRequestManager,
 } = FBSDK;
 
 import Styles from './Styles';
@@ -24,6 +26,7 @@ const MovesIcon = createIconSet(glyphMap, 'icomoon', 'C:/Users/Abirami/Documents
 
 var CLIENT_ID = 12;
 var CALLBACK_URI = 12;
+var token = '';
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -38,7 +41,66 @@ export default class SignUp extends Component {
   }
 
   loginWithFacebook() {
+    LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'user_location']).then(
+      function(result) {
+        if (result.isCancelled) {
+          alert('Login cancelled');
+        } else {
 
+          AccessToken.getCurrentAccessToken().then(
+                  (data) => {
+                    token = data.accessToken.toString()
+
+                    const responseCallback = ((error, result) => {
+                              if (error) {
+                                alert('error')
+                              }
+                              else {
+                                fetch('http://www.friendathlon.com/updateProfile', {
+                                  method: 'POST',
+                                  body:
+                                  JSON.stringify({
+                                    "id" : result.id,
+                                    "friends" : result.friends.data,
+                                    "name" : result.name,
+                                    "location" : result.location.name
+                                  })
+                                })
+                                .then((response) => response.json())
+                                .catch((error) => { alert(error) });
+                              }
+                    })
+
+                    // the famous params object...
+                    const profileRequestParams = {
+                                fields: {
+                                    string: 'id, name, friends, location'
+                                }
+                    }
+
+                    const profileRequestConfig = {
+                                httpMethod: 'GET',
+                                version: 'v2.5',
+                                parameters: profileRequestParams,
+                                accessToken: token
+                    }
+
+                    const profileRequest = new GraphRequest(
+                                '/me',
+                                profileRequestConfig,
+                                responseCallback,
+                    )
+
+                    // Start the graph request.
+                    new GraphRequestManager().addRequest(profileRequest).start();
+                  }
+                )
+        }
+      },
+      function(error) {
+        alert('Login fail with error: ' + error);
+      }
+    );
   }
 
   connectWithMoves() {

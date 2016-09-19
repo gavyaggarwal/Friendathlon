@@ -64,10 +64,16 @@ var exports = module.exports = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     marginLeft: 10,
+    borderRadius: 10,
   },
   cardHead: {
-    flex:1,
     backgroundColor: 'blue',
+    borderTopRightRadius: 9,
+    borderTopLeftRadius: 9,
+  },
+  cardHeadText: {
+    fontSize: 30,
+    color: '#fff'
   },
   cardBody: {
     flex:1,
