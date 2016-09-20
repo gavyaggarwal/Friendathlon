@@ -36,49 +36,77 @@ class UserCard extends Component {
 export default class SpecificLeaderboard extends Component {
   constructor(props) {
     super(props);
-    console.log(props)
-    this.state = {
-      title: "Today's Walking Leaderboard",
-      caption: "Good job! You ranked 3rd out of your 19 friends, and you're on track for a ribbon. You also ranked in the top 5 percentile worldwide. Your 19 friends walked a total of 38.1 miles today. That's an average of 2 miles per person so far.",
-      cards: [{
-        rank: 1,
-        name: "Gavy Aggarwal",
-        location: "Newark, DE",
-        distance: 5.7,
-        progress: 1,
-        me: false
-      },
-      {
-        rank: 2,
-        name: "Abirami Kurinchi-Vendhan",
-        location: "Hillsboro, OR",
-        distance: 4.9,
-        progress: 0.85,
-        me: false
-      },
-      {
-        rank: 3,
-        name: "John Doe",
-        location: "Austin, TX",
-        distance: 4.0,
-        progress: 0.6,
-        me: true
-      }]
-    };
+    var userID = props.userID;
+    var activity = "walking";
+    var period = "week";
+
+    var that = this;
+    (async function() {
+      try {
+        let response = await fetch('http://www.friendathlon.com/specificLeaderboard?id=' + userID + '&activity=' + activity + '&time=' + period);
+        let json = await response.json();
+        that.setState(json);
+      } catch(error) {
+        console.error(error);
+      }
+    })();
+
+    this.state = null;
 
   }
   render() {
-    return (
-      <View style={Styles.container}>
-        <ScrollView style={localStyles.scrollView}>
-          <Text style={localStyles.heading}>{this.state.title}</Text>
-          <Text style={localStyles.caption}>{this.state.caption}</Text>
-          { this.state.cards.map(function(user) {
-            return <UserCard data={user} key={user.rank}></UserCard>;
-          }) }
-        </ScrollView>
-      </View>
-    );
+    if (this.state == null) {
+      return (
+        <View style={Styles.container}>
+          <ScrollView style={localStyles.scrollView}>
+            <Text style={localStyles.heading}>Title</Text>
+          </ScrollView>
+        </View>
+      )
+    } else {
+      var heading = "";
+      var ranking = "";
+      var ribbonOnTrack = "";
+      switch (this.state.stats.friendRank) {
+        case 1:
+          heading = "Fantastic Job! ";
+          ranking = "1st";
+          ribbonOnTrack = ", and you're on track for a ribbon";
+          break;
+        case 2:
+          heading = "Great Job! ";
+          ranking = "2nd";
+          ribbonOnTrack = ", and you're on track for a ribbon";
+          break;
+        case 3:
+          heading = "Good Job! ";
+          ranking = "3rd";
+          break;
+        default:
+          heading = this.state.stats.friendRank + "th"
+          break;
+      }
+      var friends = "friends";
+      if (this.state.stats.friendTotal == 1) {
+        friends = "friend";
+      }
+      return (
+        <View style={Styles.container}>
+          <ScrollView style={localStyles.scrollView}>
+            <Text style={localStyles.heading}>{this.state.title}</Text>
+            <Text style={localStyles.caption}>
+              {heading}You ranked {ranking} out of your {this.state.stats.friendTotal} {friends}{ribbonOnTrack}.
+              Your {this.state.stats.friendTotal} {friends} walked a total of {Math.round(this.state.stats.totalDistance * 0.000621371)} miles today.
+              That's an average of {Math.round(this.state.stats.averageDistance * 0.000621371)} miles per person so far.
+            </Text>
+            { this.state.friends.map(function(user) {
+              return <UserCard data={user} key={user.rank}></UserCard>;
+            }) }
+          </ScrollView>
+        </View>
+      );
+    }
+
   }
 }
 
