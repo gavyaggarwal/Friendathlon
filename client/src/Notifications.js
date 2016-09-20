@@ -10,7 +10,7 @@ module.exports = {
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
       onRegister: async function(token) {
-        console.log( 'Recieved Token:', JSON.stringify(token) );
+        console.log('Recieved Token:', token.token );
         try {
           const userID = await AsyncStorage.getItem('FBID');
           if (userID !== null) {
