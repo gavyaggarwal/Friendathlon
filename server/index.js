@@ -401,6 +401,10 @@ app.get('/debugDump', verifyDB, function (req, res) {
   });
 });
 
+app.get('/pagecount', verifyDB, function (req, res) {
+  sendObject(res, {});
+});
+
 // error handling
 app.use(function(err, req, res, next){
   console.error(err.stack);
