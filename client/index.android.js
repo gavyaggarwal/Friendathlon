@@ -57,7 +57,7 @@ class Friendathlon extends Component {
     }
   }
   render() {
-    return (<GenericLeaderboard userID={this.state.userID} navigator={navigator} />);
+    //return (<SignUp userID={this.state.userID} navigator={navigator} />);
     if (this.state.needsLogin) {
       return (<SignUp />);
     } else if (this.state.userID == null) {
@@ -66,7 +66,7 @@ class Friendathlon extends Component {
       );
     } else {
       return (
-        <Navigator initialRoute={{id: 'generic'}} renderScene={this.navigatorRenderScene}/>
+        <Navigator initialRoute={{id: 'signup'}} renderScene={this.navigatorRenderScene}/>
       );
     }
   }
