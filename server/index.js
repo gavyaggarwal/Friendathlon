@@ -9,7 +9,7 @@
  *                 "location": <LOCATION STRING (eg. Newark, DE)>
  *               }
  *
- * /viewProfile (GET) - Returns information for a user
+ * /getProfile (GET) - Returns information for a user
  * Request Parameters: id=<FBID>
  *
  * /genericLeaderboard (GET) - Returns generic leaderboards for a user
@@ -28,7 +28,8 @@ var express    = require('express'),
     morgan     = require('morgan'),
     db         = require('./db.js'),
     config     = require('./config.js'),
-    cron       = require('./cron.js');
+    cron       = require('./cron.js'),
+    logic      = require('./logic.js');
 
 
 Object.assign=require('object-assign');
@@ -86,76 +87,35 @@ app.post('/updateProfile', verifyDB, function (req, res) {
   });
 });
 
-app.get('/viewProfile', verifyDB, function (req, res) {
+app.get('/getProfile', verifyDB, function (req, res) {
   assert(req.query.id);
 
   result = {
     ribbons: ['walking', 'cycling', 'running'],
-    medals: ['cycling']
+    medals: ['cycling'],
+    walkingRecord: 0,
+    runningRecord: 0,
+    cyclingRecord: 0,
+    validUser: true
   };
-  data = {};
 
-  function sendIfReady() {
-    if(data.walking && data.running && data.cycling) {
+  var col = db.getInstance().collection('users');
+  col.findOne({
+    id: req.query.id
+  }, function(err, item) {
+    if(err) {
+      console.log(err);
+    } else if (!item || !item.accessToken) {
+      result.validUser = false;
       sendObject(res, result);
-    }
-  }
-
-  var col = db.getInstance().collection('activities');
-  var max = col.findOne({
-    $query: {
-      "id": req.query.id,
-      "activity": "walking"
-    },
-    $orderBy: {"distance": -1}
-  }, function(err, item) {
-    data.walking = true;
-    if (err) {
-      console.log("DB Error: ", err);
-    } else if (item == null) {
-      result.walkingRecord = 0;
     } else {
-      result.walkingRecord = item.distance;
+      logic.refreshMovesData(item, function() {
+        sendObject(res, result);
+      }, function() {
+        result.validUser = false;
+        sendObject(res, result);
+      });
     }
-    sendIfReady();
-  });
-
-  var col = db.getInstance().collection('activities');
-  var max = col.findOne({
-    $query: {
-      "id": req.query.id,
-      "activity": "running"
-    },
-    $orderBy: {"distance": -1}
-  }, function(err, item) {
-    data.running = true;
-    if (err) {
-      console.log("DB Error: ", err);
-    } else if (item == null) {
-      result.runningRecord = 0;
-    } else {
-      result.runningRecord = item.distance;
-    }
-    sendIfReady();
-  });
-
-  var col = db.getInstance().collection('activities');
-  var max = col.findOne({
-    $query: {
-      "id": req.query.id,
-      "activity": "cycling"
-    },
-    $orderBy: {"distance": -1}
-  }, function(err, item) {
-    data.cycling = true;
-    if (err) {
-      console.log("DB Error: ", err);
-    } else if (item == null) {
-      result.cyclingRecord = 0;
-    } else {
-      result.cyclingRecord = item.distance;
-    }
-    sendIfReady();
   });
 });
 
@@ -345,7 +305,7 @@ app.get('/specificLeaderboard', verifyDB, function (req, res) {
            }
            totalDistance += friend.distance;
          }
-         
+
          sendObject(res, {
            stats: {
              friendRank: myRank,
