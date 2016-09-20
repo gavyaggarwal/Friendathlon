@@ -34,6 +34,33 @@ class UserCard extends Component {
 }
 
 export default class SpecificLeaderboard extends Component {
+  pastTense(verb) {
+    const pastTense = {
+      "walking" : "walked",
+      "running" : "ran",
+      "cycling" : "cycled"
+    };
+    return pastTense[verb];
+  }
+
+  header(verb) {
+    const headers = {
+      "walking" : "Walking",
+      "running" : "Running",
+      "cycling" : "Cycling"
+    };
+    return headers[verb];
+  }
+
+  periodMap(time) {
+    const headers = {
+      "day" : "today",
+      "week" : "this week",
+      "month" : "this month"
+    };
+    return headers[verb];
+  }
+
   constructor(props) {
     super(props);
     var userID = props.userID;
@@ -96,7 +123,7 @@ export default class SpecificLeaderboard extends Component {
             <Text style={localStyles.heading}>{this.state.title}</Text>
             <Text style={localStyles.caption}>
               {heading}You ranked {ranking} out of your {this.state.stats.friendTotal} {friends}{ribbonOnTrack}.
-              Your {this.state.stats.friendTotal} {friends} walked a total of {Math.round(this.state.stats.totalDistance * 0.000621371)} miles today.
+              Your {this.state.stats.friendTotal} {friends} {this.pastTense(activity)} a total of {Math.round(this.state.stats.totalDistance * 0.000621371)} miles {this.periodMap(period)}.
               That's an average of {Math.round(this.state.stats.averageDistance * 0.000621371)} miles per person so far.
             </Text>
             { this.state.friends.map(function(user) {

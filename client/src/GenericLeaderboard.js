@@ -32,7 +32,13 @@ class ActivityCard extends Component {
     return headers[verb];
   }
 
+  buttonPress() {
+    console.log("PRESS")
+  }
+
   render () {
+    this.buttonPress()
+
     activity = this.props.info.activity;
     info = this.props.info;
     switch(activity) {
