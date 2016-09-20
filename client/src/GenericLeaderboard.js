@@ -20,17 +20,17 @@ class ActivityCard extends Component {
         </Text>
       </View>
       <View style={Styles.cardBody}>
-        <Text style={Styles.cardBodyText}>
+        <Text style={Styles.cardBodyTextHdr}>
           {this.props.activity}
         </Text>
       </View>
       <View style={Styles.cardBody}>
-        <Text style={Styles.cardBodyText}>
+        <Text style={Styles.cardBodyTextHdr}>
           {this.props.activity}
         </Text>
       </View>
       <View style={Styles.cardBody}>
-        <Text style={Styles.cardBodyText}>
+        <Text style={Styles.cardBodyTextHdr}>
           {this.props.activity}
         </Text>
       </View>

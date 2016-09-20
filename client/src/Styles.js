@@ -49,17 +49,17 @@ var exports = module.exports = StyleSheet.create({
     fontFamily: 'alegreyasans_light',
   },
   toolbarTitle:{
-    color:'#000',
+    color: '#666',
     textAlign:'center',
     fontWeight:'bold',
     flex:1,
-    fontFamily: 'alegreyasans_light',
+    fontFamily: 'alegreyasans_regular',
     fontSize: 25,
   },
   card: {
     width: 200,
     flex:1,
-    borderColor: '#000',
+    borderColor: 'blue',
     borderWidth: 2,
     marginTop: 10,
     marginBottom: 20,
@@ -77,15 +77,23 @@ var exports = module.exports = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: 'alegreyasans',
+    fontFamily: 'alegreyasans_bold',
   },
   cardBody: {
     flex:1,
     justifyContent: 'center',
   },
-  cardBodyText: {
-    fontSize: 15,
+  cardBodyTextHdr: {
+    fontSize: 22,
     marginLeft: 10,
-    fontFamily: 'alegreyasans',
+    fontFamily: 'alegreyasans_regular',
+  },
+  cardBodyText: {
+    fontSize: 17,
+    marginLeft: 10,
+    fontFamily: 'alegreyasans_regular',
+  },
+  activityIcon: {
+    tintColor: 'white'
   }
 });
