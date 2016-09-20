@@ -38,7 +38,6 @@ class Friendathlon extends Component {
           throw {message: "Logged Out"};
         }
       } catch (error) {
-        console.log("B")
         that.setState({
           userID: null,
           needsLogin: true
@@ -52,13 +51,14 @@ class Friendathlon extends Component {
       case 'signup':
         return (<SignUp navigator={navigator} />);
       case 'generic':
-        return (<GenericLeaderboard navigator={navigator} />);
+        return (<GenericLeaderboard userID={this.state.userID} navigator={navigator} />);
       case 'specific':
-        return (<SpecificLeaderboard navigator={navigator} />);
+        return (<SpecificLeaderboard userID={this.state.userID} navigator={navigator} />);
     }
   }
   render() {
-    console.log("rendering", this.state);
+    console.log("RENDER", this.state.userID)
+    return (<SpecificLeaderboard userID= {this.state.userID} navigator={navigator} />);
     if (this.state.needsLogin) {
       return (<SignUp />);
     } else if (this.state.userID == null) {
