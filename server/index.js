@@ -16,7 +16,7 @@
  * Request Parameters: id=<FBID>
  *
  * /specificLeaderboard (GET) - Returns specific leaderboard for a user/activity
- * Request Parameters: id=<FBID>&activity=<activity>
+ * Request Parameters: id=<FBID>&activity=<activity>&time=<day/week/month>
  */
 
 var express    = require('express'),
@@ -272,106 +272,95 @@ app.get('/genericLeaderboard', verifyDB, function (req, res) {
          sendObject(res, {leaderboards: leaderboards});
        }
      });
-
-
-     /*
-  sendObject(res, {
-    leaderboards: [
-      {
-        activity: "walking",
-        daily: {
-          distance: 3.4,
-          rank: 3,
-          total: 5
-        },
-        weekly: {
-          distance: 14,
-          rank: 5,
-          total: 19
-        },
-        monthly: {
-          distance: 39,
-          rank: 8,
-          total: 24
-        }
-      },
-      {
-        activity: "running",
-        daily: {
-          distance: 0.5,
-          rank: 4,
-          total: 5
-        },
-        weekly: {
-          distance: 0.5,
-          rank: 12,
-          total: 19
-        },
-        monthly: {
-          distance: 4,
-          rank: 12,
-          total: 24
-        }
-      }
-    ]
-  });*/
 });
 
 app.get('/specificLeaderboard', verifyDB, function (req, res) {
   assert(req.query.id != undefined);
   assert(req.query.activity != undefined);
-  sendObject(res, {
-    stats: {
-      friendRank: 3,
-      friendTotal: 19,
-      ribbonOnTrack: true,
-      //percentile: 5,
-      totalDistance: 38.1,
-      averageDistance: 2
-    },
-    friends: [
-      {
-        rank: 1,
-        name: "Gavy Aggarwal",
-        location: "Newark, DE",
-        distance: 5.7,
-        progress: 1,
-        me: false
-      },
-      {
-        rank: 2,
-        name: "Abirami Kurinchi-Vendhan",
-        location: "Hillsboro, OR",
-        distance: 4.9,
-        progress: 0.85,
-        me: false
-      },
-      {
-        rank: 3,
-        name: "John Doe",
-        location: "Austin, TX",
-        distance: 4.0,
-        progress: 0.6,
-        me: true
-      },
-      {
-        rank: 4,
-        name: "Sarah Johnson",
-        location: "Pasadena, CA",
-        distance: 1.7,
-        progress: 0.4,
-        me: false
-      },
-      {
-        rank: 5,
-        name: "Jacob Smith",
-        location: "Seattle, WA",
-        distance: 0.2,
-        progress: 0.1,
-        me: false
-      }
-    ]
-  });
+  assert(req.query.time != undefined);
+
+  var friends = [];
+  var activity = req.query.activity;
+  var period = req.query.time;
+
+  var col = db.getInstance().collection('users');
+  col.aggregate([
+    { $match: { "id": req.query.id } },
+    { $unwind: '$friends' },
+    { $lookup: {
+      from: "users",
+      localField: "friends",
+      foreignField: "id",
+      as: "friendData"
+    }}
+  ]).toArray(function(err, result) {
+     assert.equal(err, null);
+
+     for (var j = 0; j < result.length; j++) {
+       var friend = result[j].friendData[0];
+
+       var friendDistances = getDistances(friend, activity);
+
+       friends.push({
+         name: friend.name,
+         location: friend.location,
+         distance: friendDistances[period],
+         me: false
+       });
+     }
+
+     col.findOne({
+         "id": req.query.id
+       }, function(err, item) {
+         assert(err == null);
+
+         var myDistances = getDistances(item, activity);
+
+         friends.push({
+           name: item.name,
+           location: item.location,
+           distance: myDistances[period],
+           me: true
+         });
+
+         friends.sort(function(a,b) {
+           if (a.distance > b.distance) {
+             return -1;
+           } else if (a.distance < b.distance) {
+             return 1;
+           }
+           return 0;
+         });
+
+         var maxDistance = parseFloat(friends[0].distance);
+         var myRank = 0;
+         var totalDistance = 0;
+
+         for (var i = 0; i < friends.length; i++) {
+           var friend = friends[i];
+           friend.rank = i + 1;
+           friend.progress = friend.distance / maxDistance;
+           if (friend.me) {
+             myRank = friend.rank;
+           }
+           totalDistance += friend.distance;
+         }
+         
+         sendObject(res, {
+           stats: {
+             friendRank: myRank,
+             friendTotal: friends.length,
+             ribbonOnTrack: true,
+             //percentile: 5,
+             totalDistance: totalDistance,
+             averageDistance: parseFloat(totalDistance) / friends.length
+           },
+           friends: friends
+         });
+
+       });
+
+   });
 });
 
 app.get('/auth', verifyDB, function (req, res) {
