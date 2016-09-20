@@ -57,7 +57,6 @@ class Friendathlon extends Component {
     }
   }
   render() {
-    console.log("RENDER", this.state.userID)
     return (<SpecificLeaderboard userID= {this.state.userID} navigator={navigator} />);
     if (this.state.needsLogin) {
       return (<SignUp />);
