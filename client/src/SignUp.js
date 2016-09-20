@@ -123,7 +123,15 @@ export default class SignUp extends Component {
       var FBID = await AsyncStorage.getItem('FBID');
       if (FBID !== null){
         const url = 'moves://app/authorize?client_id=w13CA903PnotFEqh8qGVhFAS_nRoSM22&redirect_uri=http://www.friendathlon.com/auth&scope=activity&state=' + FBID;
-        Linking.openURL(url).catch(err => console.error('An error occurred', err));
+        Linking.canOpenURL(url).then(supported => {
+          if (!supported) {
+            console.log('Can\'t handle url: ' + url);
+            Linking.openURL("https://play.google.com/store/apps/details?id=com.protogeo.moves").catch(err => console.error('An error occurred', err));
+          }
+          else {
+            Linking.openURL(url).catch(err => console.error('An error occurred', err));
+          }
+        }).catch(err => console.error('An error occurred dfsd', err));;
       } else {
         Alert.alert(
           'Warning',
@@ -167,7 +175,7 @@ export default class SignUp extends Component {
             <View style={Styles.btnView}>
               <Image source = {require('./../img/moves.png')} style={Styles.btnIcon}/>
               <Text style={Styles.btnText}>
-                Login with Facebook
+                Connect with Moves
               </Text>
             </View>
           </TouchableHighlight>
