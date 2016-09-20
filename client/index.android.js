@@ -24,7 +24,7 @@ class Friendathlon extends Component {
       try {
         const userID = await AsyncStorage.getItem('FBID');
         if (userID !== null) {
-          let response = await fetch('http://www.friendathlon.com/getProfile?id' + userID);
+          let response = await fetch('http://www.friendathlon.com/getProfile?id=' + userID);
           let responseJson = await response.json();
           if (responseJson.validUser) {
             that.setState({
@@ -51,13 +51,12 @@ class Friendathlon extends Component {
       case 'signup':
         return (<SignUp navigator={navigator} />);
       case 'generic':
-        return (<GenericLeaderboard userID={this.state.userID} navigator={navigator} />);
+        return (<GenericLeaderboard userID={route.userID} navigator={navigator} />);
       case 'specific':
-        return (<SpecificLeaderboard userID={this.state.userID} navigator={navigator} />);
+        return (<SpecificLeaderboard userID={route.userID} navigator={navigator} />);
     }
   }
   render() {
-    return (<SignUp userID={this.state.userID} navigator={navigator} />);
     if (this.state.needsLogin) {
       return (<SignUp />);
     } else if (this.state.userID == null) {
@@ -66,7 +65,7 @@ class Friendathlon extends Component {
       );
     } else {
       return (
-        <Navigator initialRoute={{id: 'signup'}} renderScene={this.navigatorRenderScene}/>
+        <Navigator initialRoute={{id: 'generic', userID: this.state.userID}} renderScene={this.navigatorRenderScene}/>
       );
     }
   }
