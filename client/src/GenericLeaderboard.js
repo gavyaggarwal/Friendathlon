@@ -50,6 +50,49 @@ export default class GenericLeaderboard extends Component {
   }
 
   render() {
+    var data = {
+        leaderboards: [
+          {
+            activity: "walk",
+            daily: {
+              distance: 3.4,
+              rank: 3,
+              total: 5
+            },
+            weekly: {
+              distance: 14,
+              rank: 5,
+              total: 19
+            },
+            monthly: {
+              distance: 39,
+              rank: 8,
+              total: 24
+            }
+          },
+          {
+            activity: "run",
+            daily: {
+              distance: 0.5,
+              rank: 4,
+              total: 5
+            },
+            weekly: {
+              distance: 0.5,
+              rank: 12,
+              total: 19
+            },
+            monthly: {
+              distance: 4,
+              rank: 12,
+              total: 24
+            }
+          }
+        ]
+      }
+
+    data = data['leaderboards'];
+
     var cards = [];
 
     return (

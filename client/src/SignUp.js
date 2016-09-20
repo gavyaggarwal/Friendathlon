@@ -67,8 +67,9 @@ export default class SignUp extends Component {
 
                                 var friends = [];
                                 for (var i = 0; i < result.friends.data.length; i++) {
-                                  friends.push(result.friends.data[i].id)
+                                  friends.push(JSON.stringify(result.friends.data[i].id))
                                 };
+
                                 fetch('http://www.friendathlon.com/updateProfile', {
                                   method: 'POST',
                                   body:

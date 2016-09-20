@@ -26,7 +26,7 @@ class Friendathlon extends Component {
   }
   render() {
     return (
-      <Navigator initialRoute={{id: 'generic'}} renderScene={this.navigatorRenderScene}/>
+      <Navigator initialRoute={{id: 'signup'}} renderScene={this.navigatorRenderScene}/>
     );
   }
 }

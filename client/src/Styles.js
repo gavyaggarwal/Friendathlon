@@ -94,6 +94,7 @@ var exports = module.exports = StyleSheet.create({
     fontFamily: 'alegreyasans_regular',
   },
   activityIcon: {
-    tintColor: 'white'
+    tintColor: 'white',
+    
   }
 });
