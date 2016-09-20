@@ -70,6 +70,7 @@ module.exports = StyleSheet.create({
     backgroundColor: 'blue',
     borderTopRightRadius: 9,
     borderTopLeftRadius: 9,
+    alignItems: 'center',
   },
   cardHeadText: {
     fontSize: 25,
@@ -78,6 +79,7 @@ module.exports = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: 'alegreyasans_bold',
+    marginBottom: 10
   },
   cardBody: {
     flex:1,
@@ -93,8 +95,11 @@ module.exports = StyleSheet.create({
     marginLeft: 10,
     fontFamily: 'alegreyasans_regular',
   },
-  activityIcon: {
+  cardIcon: {
     tintColor: 'white',
+    height: 80,
+    width: 80,
+    marginTop: 10
   },
   walking: {
     color: '#00d55a'

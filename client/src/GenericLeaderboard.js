@@ -36,13 +36,13 @@ class ActivityCard extends Component {
     info = this.props.info;
     switch(activity) {
       case "walking":
-          path = require('./icons/walking.png')
+          path = require('./../img/walking.png');
           break;
       case "running":
-          path = require('./icons/running.png')
+          path = require('./../img/running.png');
           break;
       case "cycling":
-          path = require('./icons/cycling.png')
+          path = require('./../img/cycling.png');
           break;
       default:
           path = '';
@@ -51,7 +51,7 @@ class ActivityCard extends Component {
     return (
     <View style={[Styles.card, Styles[activity + 'Border']]}>
       <View style={[Styles.cardHead, Styles[activity + 'Bkgd']]}>
-        <Image source={path}/>
+        <Image style={Styles.cardIcon} source={path}/>
         <Text style={Styles.cardHeadText}>
           {this.header(activity)}
         </Text>
