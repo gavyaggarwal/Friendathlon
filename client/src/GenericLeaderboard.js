@@ -10,13 +10,35 @@ import {
 
 import Styles from './Styles';
 
+const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+
 class ActivityCard extends Component {
+  pastTense(verb) {
+    const pastTense = {
+      "walking" : "walked",
+      "running" : "ran",
+      "cycling" : "cycled"
+    };
+    return pastTense[verb];
+  }
+
+  header(verb) {
+    const headers = {
+      "walking" : "Walking",
+      "running" : "Running",
+      "cycling" : "Cycling"
+    };
+    return headers[verb];
+  }
+
   render () {
+    activity = this.props.info.activity;
+    info = this.props.info
     return (
-    <View style={Styles.card}>
-      <View style={Styles.cardHead}>
+    <View style={[Styles.card, Styles[activity + 'Border']]}>
+      <View style={[Styles.cardHead, Styles[activity + 'Bkgd']]}>
         <Text style={Styles.cardHeadText}>
-          {this.props.activity}
+          {this.header(activity)}
         </Text>
       </View>
       <View style={Styles.cardBody}>
@@ -24,6 +46,11 @@ class ActivityCard extends Component {
           Daily
         </Text>
         <Text style={Styles.cardBodyText}>
+        You {this.pastTense(activity)} <B>{info.daily.distance}</B> miles today. {"\n"}
+        You rank <B>{info.daily.rank}</B> out of <B>{info.daily.total}</B>.
+        </Text>
+        <Text style={[Styles.cardBodyText, Styles[activity]]}>
+        More Info
         </Text>
       </View>
       <View style={Styles.cardBody}>
@@ -31,6 +58,11 @@ class ActivityCard extends Component {
           Weekly
         </Text>
         <Text style={Styles.cardBodyText}>
+        You {this.pastTense(activity)} <B>{info.weekly.distance}</B> miles this week. {"\n"}
+        You rank <B>{info.weekly.rank}</B> out of <B>{info.weekly.total}</B>.
+        </Text>
+        <Text style={[Styles.cardBodyText, Styles[activity]]}>
+        More Info
         </Text>
       </View>
       <View style={Styles.cardBody}>
@@ -38,11 +70,17 @@ class ActivityCard extends Component {
           Monthly
         </Text>
         <Text style={Styles.cardBodyText}>
+        You {this.pastTense(activity)} <B>{info.monthly.distance}</B> miles this month. {"\n"}
+        You rank <B>{info.monthly.rank}</B> out of <B>{info.monthly.total}</B>.
+        </Text>
+        <Text style={[Styles.cardBodyText, Styles[activity]]}>
+        More Info
         </Text>
       </View>
     </View>
   )}
 }
+
 export default class GenericLeaderboard extends Component {
   constructor(props) {
 
@@ -53,13 +91,11 @@ export default class GenericLeaderboard extends Component {
     this.onPressButton = function() {
         that.props.navigator.push({id: "specific"});
       };
-  }
 
-  render() {
     var data = {
         leaderboards: [
           {
-            activity: "walk",
+            activity: "walking",
             daily: {
               distance: 3.4,
               rank: 3,
@@ -77,7 +113,7 @@ export default class GenericLeaderboard extends Component {
             }
           },
           {
-            activity: "run",
+            activity: "running",
             daily: {
               distance: 0.5,
               rank: 4,
@@ -96,26 +132,15 @@ export default class GenericLeaderboard extends Component {
           }
         ]
       }
-
-    const pastTense = {
-      "walking" : "walked",
-      "running" : "ran",
-      "cycling" : "cycled"
-    }
-
-    const activityHeaders = {
-      "walking" : "Walking",
-      "running" : "Running",
-      "cycling" : "Cycling"
-    }
-
-    data = data['leaderboards'];
-    var cards = [];
-    for (var i = 0; i < data.length; i++) {
-
-    }
+    this.cards = data['leaderboards'];
+  }
 
 
+  render() {
+    let cards = this.cards.map((card, i) => {
+        return <ActivityCard key = {  i } info = { card } >
+               </ActivityCard>
+    })
 
     return (
       <View style={Styles.container}>
@@ -125,14 +150,7 @@ export default class GenericLeaderboard extends Component {
         </View>
         <View style={{flex:1}}>
           <ScrollView horizontal>
-            <ActivityCard activity='Walking'>
-            </ActivityCard>
-            <ActivityCard activity='Running'>
-            </ActivityCard>
-            <ActivityCard activity='Cycling'>
-            </ActivityCard>
-            <ActivityCard activity='Kayaking'>
-            </ActivityCard>
+            { cards }
           </ScrollView>
         </View>
       </View>
