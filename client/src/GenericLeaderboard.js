@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Text,
   Image,
+  ToolbarAndroid,
   TouchableHighlight,
   ScrollView,
   View,
@@ -191,8 +192,8 @@ export default class GenericLeaderboard extends Component {
       <View style={Styles.container}>
         <View style={Styles.toolbar}>
           <Text style={Styles.toolbarTitle}>Friendathlon Leaderboards</Text>
-          <Text style={Styles.toolbarButton}></Text>
         </View>
+        <Image style={Styles.toolbarButtonRight} source={require('./../img/profile.png')}></Image>
         <View style={{flex:1}}>
           <ScrollView horizontal>
             { cards }

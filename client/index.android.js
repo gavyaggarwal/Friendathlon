@@ -57,7 +57,7 @@ class Friendathlon extends Component {
     }
   }
   render() {
-    //return (<SignUp userID={this.state.userID} navigator={navigator} />);
+    return (<SignUp userID={this.state.userID} navigator={navigator} />);
     if (this.state.needsLogin) {
       return (<SignUp />);
     } else if (this.state.userID == null) {

@@ -34,21 +34,33 @@ module.exports = StyleSheet.create({
   toolbar:{
     paddingTop:10,
     paddingBottom:10,
-    flexDirection:'row'
+    flexDirection:'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  toolbarButton:{
-    width: 50,
-    color:'#000',
-    textAlign:'center',
-    fontFamily: 'alegreyasans_light',
+  toolbarButtonRight:{
+    width: 25,
+    height: 25,
+    justifyContent: 'flex-end',
+    tintColor: '#666',
+    position: 'absolute',
+    top: 15,
+    right: 7
+  },
+  toolbarButtonLeft:{
+    width: 35,
+    height: 35,
+    justifyContent: 'flex-end',
+    tintColor: '#666',
+    position: 'absolute',
+    top: 10
   },
   toolbarTitle:{
     color: '#666',
-    textAlign:'center',
     fontWeight:'bold',
-    flex:1,
     fontFamily: 'alegreyasans_regular',
     fontSize: 25,
+    //justifyContent: 'center',
   },
   card: {
     width: 230,
