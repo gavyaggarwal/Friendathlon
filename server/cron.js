@@ -16,19 +16,82 @@ module.exports = {
               console.log("Cron Job Error:", err);
             } else if (item && item.accessToken) {
               console.log("Token:", item.accessToken);
-              config.oauth.get("https://api.moves-app.com/api/1.1/user/summary/daily/201608", item.accessToken, function(err, result, response) {
+              var currDate = new Date();
+              var monthStr = currDate.toISOString().substring(0,7).replace(/-/g, "");
+              var url = "https://api.moves-app.com/api/1.1/user/summary/daily/" + monthStr;
+              config.oauth.get(url, item.accessToken, function(err, result, response) {
                 if (err) {
                   console.log("error", err);
                 } else {
                   var results = JSON.parse(result);
+                  var col = db.getInstance().collection('activities');
+                  var lastDay = {};
+                  var lastWeek = {};
+                  var lastMonth = {};
                   for (var i = 0; i < results.length; i++) {
-                    var date = results[i].date;
+                    var dateStr = results[i].date;
                     var summary = results[i].summary;
-                    console.log(date);
+                    if (summary == null) {
+                      continue;
+                    }
+                    var date = new Date(dateStr / 10000, (dateStr % 10000 / 100) - 1, dateStr % 100);
                     for (var j = 0; j < summary.length; j++) {
-                      console.log(summary[j].activity, summary[j].distance);
+                      var group = summary[j].group;
+                      var distance = summary[j].distance;
+                      col.updateOne(
+                        {
+                          "id": item.id,
+                          "activity": summary[j].activity,
+                          "date": date
+                        },
+                        {
+                          $set: {
+                            "group": group,
+                            "distance": distance,
+                            "duration": summary[j].duration
+                          },
+                          $currentDate: { "lastModified": true }
+                        },
+                        {
+                          upsert: true
+                        }, function(err, results) {
+                          //console.log(err, results);
+                      });
+                      var daysFromToday = (currDate.getTime() - date.getTime()) / 24 / 60 / 60 / 1000;
+                      if (daysFromToday < 1) {
+                        if (lastDay[group] == undefined) {
+                          lastDay[group] = 0;
+                        }
+                        lastDay[group] += distance;
+                      }
+                      if (daysFromToday < 7) {
+                        if (lastWeek[group] == undefined) {
+                          lastWeek[group] = 0;
+                        }
+                        lastWeek[group] += distance;
+                      }
+                      if (daysFromToday < 30) {
+                        if (lastMonth[group] == undefined) {
+                          lastMonth[group] = 0;
+                        }
+                        lastMonth[group] += distance;
+                      }
                     }
                   }
+                  var users = db.getInstance().collection('users');
+                  users.updateOne(
+                    { "id": item.id },
+                    {
+                      $set: {
+                        "todayActivities": lastDay,
+                        "thisWeekActivities": lastWeek,
+                        "thisMonthActivities": lastMonth
+                      },
+                      $currentDate: { "lastModified": true }
+                    },
+                    {
+                      upsert: true
+                    });
                 }
               });
             } else {
@@ -42,6 +105,6 @@ module.exports = {
       }
     }
 
-    setInterval(task, 6000);
+    setInterval(task, 4000);
   }
 }

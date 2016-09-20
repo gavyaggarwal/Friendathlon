@@ -9,6 +9,9 @@
  *                 "location": <LOCATION STRING (eg. Newark, DE)>
  *               }
  *
+ * /viewProfile (GET) - Returns information for a user
+ * Request Parameters: id=<FBID>
+ *
  * /genericLeaderboard (GET) - Returns generic leaderboards for a user
  * Request Parameters: id=<FBID>
  *
@@ -53,6 +56,14 @@ function sendObject(res, obj) {
   res.send(JSON.stringify(obj));
 }
 
+function getDistances(item, activity) {
+  return {
+    day: item.todayActivities ? (item.todayActivities[activity] || 0) : 0,
+    week: item.thisWeekActivities ? (item.thisWeekActivities[activity] || 0) : 0,
+    month: item.thisMonthActivities ? (item.thisMonthActivities[activity] || 0) : 0
+  }
+}
+
 app.post('/updateProfile', verifyDB, function (req, res) {
   assert(req.body.id);
   assert(req.body.friends);
@@ -75,12 +86,199 @@ app.post('/updateProfile', verifyDB, function (req, res) {
   });
 });
 
+app.get('/viewProfile', verifyDB, function (req, res) {
+  assert(req.query.id);
+
+  result = {
+    ribbons: ['walking', 'cycling', 'running'],
+    medals: ['cycling']
+  };
+  data = {};
+
+  function sendIfReady() {
+    if(data.walking && data.running && data.cycling) {
+      sendObject(res, result);
+    }
+  }
+
+  var col = db.getInstance().collection('activities');
+  var max = col.findOne({
+    $query: {
+      "id": req.query.id,
+      "activity": "walking"
+    },
+    $orderBy: {"distance": -1}
+  }, function(err, item) {
+    data.walking = true;
+    if (err) {
+      console.log("DB Error: ", err);
+    } else if (item == null) {
+      result.walkingRecord = 0;
+    } else {
+      result.walkingRecord = item.distance;
+    }
+    sendIfReady();
+  });
+
+  var col = db.getInstance().collection('activities');
+  var max = col.findOne({
+    $query: {
+      "id": req.query.id,
+      "activity": "running"
+    },
+    $orderBy: {"distance": -1}
+  }, function(err, item) {
+    data.running = true;
+    if (err) {
+      console.log("DB Error: ", err);
+    } else if (item == null) {
+      result.runningRecord = 0;
+    } else {
+      result.runningRecord = item.distance;
+    }
+    sendIfReady();
+  });
+
+  var col = db.getInstance().collection('activities');
+  var max = col.findOne({
+    $query: {
+      "id": req.query.id,
+      "activity": "cycling"
+    },
+    $orderBy: {"distance": -1}
+  }, function(err, item) {
+    data.cycling = true;
+    if (err) {
+      console.log("DB Error: ", err);
+    } else if (item == null) {
+      result.cyclingRecord = 0;
+    } else {
+      result.cyclingRecord = item.distance;
+    }
+    sendIfReady();
+  });
+});
+
 app.get('/genericLeaderboard', verifyDB, function (req, res) {
   assert(req.query.id != undefined);
+  var supportedActivities = ["walking", "running", "cycling"];
+  var leaderboards = [];
+
+  var col = db.getInstance().collection('users');
+  col.aggregate([
+    { $match: { "id": req.query.id } },
+    { $unwind: '$friends' },
+    { $lookup: {
+      from: "users",
+      localField: "friends",
+      foreignField: "id",
+      as: "friendData"
+    }}
+  ]).toArray(function(err, result) {
+       assert.equal(err, null);
+       if (result.length == 0) {
+         var max = col.findOne({
+           "id": req.query.id
+         }, function(err, item) {
+           for (var i = 0; i < supportedActivities.length; i++) {
+             var activity = supportedActivities[i];
+
+             var distances = getDistances(item, activity);
+             if (distances.month == 0) {
+               continue;
+             }
+             leaderboards.push({
+               activity: activity,
+               daily: {
+                 distance: distances.day,
+                 rank: 1,
+                 total: 1
+               },
+               weekly: {
+                 distance: distances.week,
+                 rank: 1,
+                 total: 1
+               },
+               monthly: {
+                 distance: distances.month,
+                 rank: 1,
+                 total: 1
+               }
+             });
+           }
+           sendObject(res, {leaderboards: leaderboards});
+         });
+       } else {
+         for (var i = 0; i < supportedActivities.length; i++) {
+           var activity = supportedActivities[i];
+           var ranks = {
+             day: 1,
+             week: 1,
+             month: 1
+           };
+           var counts = {
+             day: 1,
+             week: 1,
+             month: 1
+           };
+           var myDistances = getDistances(result[0], activity);
+           for (var j = 0; j < result.length; j++) {
+             var friend = result[j].friendData[0];
+
+             var friendDistances = getDistances(friend, activity);
+
+             if (myDistances.month == 0) {
+               continue;
+             }
+
+             if (friendDistances.day > myDistances.day) {
+               ranks.day++;
+             }
+             if (friendDistances.week > myDistances.week) {
+               ranks.week++;
+             }
+             if (friendDistances.month > myDistances.month) {
+               ranks.month++;
+             }
+             if (friendDistances.day > 0) {
+               counts.day++;
+             }
+             if (friendDistances.week > 0) {
+               counts.week++;
+             }
+             if (friendDistances.month > 0) {
+               counts.month++;
+             }
+           }
+           leaderboards.push({
+             activity: activity,
+             daily: {
+               distance: myDistances.day,
+               rank: ranks.day,
+               total: counts.day
+             },
+             weekly: {
+               distance: myDistances.week,
+               rank: ranks.week,
+               total: counts.week
+             },
+             monthly: {
+               distance: myDistances.month,
+               rank: ranks.month,
+               total: counts.month
+             }
+           });
+         }
+         sendObject(res, {leaderboards: leaderboards});
+       }
+     });
+
+
+     /*
   sendObject(res, {
     leaderboards: [
       {
-        activity: "walk",
+        activity: "walking",
         daily: {
           distance: 3.4,
           rank: 3,
@@ -98,7 +296,7 @@ app.get('/genericLeaderboard', verifyDB, function (req, res) {
         }
       },
       {
-        activity: "run",
+        activity: "running",
         daily: {
           distance: 0.5,
           rank: 4,
@@ -116,7 +314,7 @@ app.get('/genericLeaderboard', verifyDB, function (req, res) {
         }
       }
     ]
-  });
+  });*/
 });
 
 app.get('/specificLeaderboard', verifyDB, function (req, res) {
@@ -127,7 +325,7 @@ app.get('/specificLeaderboard', verifyDB, function (req, res) {
       friendRank: 3,
       friendTotal: 19,
       ribbonOnTrack: true,
-      percentile: 5,
+      //percentile: 5,
       totalDistance: 38.1,
       averageDistance: 2
     },
