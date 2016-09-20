@@ -13,7 +13,7 @@ module.exports = {
         console.log( 'Recieved Token:', JSON.stringify(token) );
         try {
           const userID = await AsyncStorage.getItem('FBID');
-          if (value !== null) {
+          if (userID !== null) {
             fetch('http://www.friendathlon.com/updateProfile', {
               method: 'POST',
               body:

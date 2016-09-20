@@ -6,10 +6,9 @@ import {
   View
 } from 'react-native';
 
-var exports = module.exports = StyleSheet.create({
+module.exports = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5F3E9',
     flexDirection: 'column',
@@ -95,6 +94,6 @@ var exports = module.exports = StyleSheet.create({
   },
   activityIcon: {
     tintColor: 'white',
-    
+
   }
 });
