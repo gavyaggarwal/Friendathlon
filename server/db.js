@@ -64,5 +64,9 @@ module.exports = {
     col.find().toArray(function(err, documents) {
       console.log(documents);
     });
+    var col = db.collection('activities');
+    col.find().toArray(function(err, documents) {
+      //console.log(documents);
+    });
   }
 }
