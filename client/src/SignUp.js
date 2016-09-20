@@ -121,7 +121,6 @@ export default class SignUp extends Component {
     try {
       var FBID = await AsyncStorage.getItem('FBID');
       if (FBID !== null){
-        FBID = FBID.replace(/"/g, '');
         const url = 'moves://app/authorize?client_id=w13CA903PnotFEqh8qGVhFAS_nRoSM22&redirect_uri=http://www.friendathlon.com/auth&scope=activity&state=' + FBID;
         Linking.openURL(url).catch(err => console.error('An error occurred', err));
       } else {

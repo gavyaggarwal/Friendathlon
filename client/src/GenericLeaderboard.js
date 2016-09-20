@@ -91,7 +91,20 @@ export default class GenericLeaderboard extends Component {
     this.onPressButton = function() {
         that.props.navigator.push({id: "specific"});
       };
+    /*
+    try {
+      var FBID = await AsyncStorage.getItem('FBID');
+      if (FBID !== null){
+        fetch('http://www.friendathlon.com/genericLeaderboard?id=' + FBID)
+        .then((response) => response.json())
+        .then((responseJson) => { this.cards = responseJson.leaderboards })
+        .catch((error) => { console.error(error); });
+      }
+    } catch (error) {
+      console.log(error);
+    }
 
+    */
     var data = {
         leaderboards: [
           {
@@ -129,12 +142,29 @@ export default class GenericLeaderboard extends Component {
               rank: 12,
               total: 24
             }
+          },
+          {
+            activity: "cycling",
+            daily: {
+              distance: 0.5,
+              rank: 4,
+              total: 5
+            },
+            weekly: {
+              distance: 0.5,
+              rank: 12,
+              total: 19
+            },
+            monthly: {
+              distance: 4,
+              rank: 12,
+              total: 24
+            }
           }
         ]
       }
     this.cards = data['leaderboards'];
   }
-
 
   render() {
     let cards = this.cards.map((card, i) => {
