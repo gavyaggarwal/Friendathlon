@@ -18,7 +18,7 @@ module.exports = {
               method: 'POST',
               body: JSON.stringify({
                 "id" : userID,
-                "notificationToken" : token
+                "notificationToken" : token.token
               }),
               headers: {
                 'Accept': 'application/json',
