@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Text,
+  Image,
   TouchableHighlight,
   View,
   Animated,
@@ -18,16 +19,13 @@ const {
 } = FBSDK;
 
 import Styles from './Styles';
-import FBIcon from 'react-native-vector-icons/FontAwesome';
 
-import { createIconSet } from 'react-native-vector-icons';
-const glyphMap = { 'moves': "@", };
-const MovesIcon = createIconSet(glyphMap, 'icomoon', 'C:/Users/Abirami/Documents/Friendathlon/client/android/app/src/main/assets/fonts/moves.ttf');
-// C:\Users\Abirami\Documents\Friendathlon\client\android\app\src\main\assets\fonts
+//import FBIcon from 'react-native-vector-icons/FontAwesome';
+//import { createIconSet } from 'react-native-vector-icons';
+//const glyphMap = { 'moves': "@", };
+//const MovesIcon = createIconSet(glyphMap, 'icomoon', './../android/app/src/main/assets/fonts/moves.ttf');
 // const AnimatedIcon = Animated.createAnimatedComponent(Icon)
 
-var CLIENT_ID = 12;
-var CALLBACK_URI = 12;
 var token = '';
 
 export default class SignUp extends Component {
@@ -138,12 +136,6 @@ export default class SignUp extends Component {
     } catch (error) {
       console.log(error);
     }
-    try {
-      AsyncStorage.setItem("readyStatus", "ready");
-    }
-    catch (error) {
-      console.log(error)
-    }
   }
 
   render() {
@@ -154,21 +146,31 @@ export default class SignUp extends Component {
             Thanks for downloading {"\n"} our app!
           </Text>
         </View>
-        <View style={Styles.loginButton}>
+        <View style={Styles.connect}>
           <Text style={Styles.instructions}>
             Let''s start by finding your friends:
           </Text>
-          <FBIcon.Button name="facebook" backgroundColor="#3b5998" onPress={this.loginWithFacebook}>
-            Login with Facebook
-          </FBIcon.Button>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#3b5998"}]} onPress={this.loginWithFacebook}>
+            <View style={Styles.btnView}>
+              <Image source = {require('./../img/facebook.png')} style={Styles.btnIcon}/>
+              <Text style={Styles.btnText}>
+                Login with Facebook
+              </Text>
+            </View>
+          </TouchableHighlight>
         </View>
-        <View style={Styles.loginButton}>
+        <View style={Styles.connect}>
           <Text style={Styles.instructions}>
             And getting your Moves:
           </Text>
-          <MovesIcon.Button name="moves" backgroundColor="#00d45a" onPress={this.connectWithMoves}>
-            Connect to Moves
-          </MovesIcon.Button>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00d45a"}]} onPress={this.connectWithMoves}>
+            <View style={Styles.btnView}>
+              <Image source = {require('./../img/moves.png')} style={Styles.btnIcon}/>
+              <Text style={Styles.btnText}>
+                Login with Facebook
+              </Text>
+            </View>
+          </TouchableHighlight>
         </View>
         <View style={{flex:1, alignItems: 'center',}}>
           <Text style={Styles.instructions}>

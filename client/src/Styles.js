@@ -20,11 +20,6 @@ module.exports = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'alegreyasans',
   },
-  button: {
-    backgroundColor: 'red',
-    color: 'white',
-    padding: 10,
-  },
   instructions: {
     textAlign: 'center',
     color: '#333333',
@@ -32,7 +27,7 @@ module.exports = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'alegreyasans_light',
   },
-  loginButton: {
+  connect: {
     flex:2,
     alignItems: 'center',
   },
@@ -127,5 +122,29 @@ module.exports = StyleSheet.create({
   },
   cyclingBorder: {
     borderColor: '#00cdec'
+  },
+  btn: {
+    width: 250,
+    height: 60,
+    borderRadius: 40,
+  },
+  btnView: {
+    width: 250,
+    height: 60,
+    flexDirection:'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  btnIcon: {
+    height: 30,
+    width: 30,
+    marginRight: 10,
+    tintColor: 'white'
+  },
+  btnText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 20,
+    fontFamily: 'alegreyasans_bold',
   }
 });
