@@ -72,13 +72,16 @@ export default class SignUp extends Component {
 
                                 fetch('http://www.friendathlon.com/updateProfile', {
                                   method: 'POST',
-                                  body:
-                                  JSON.stringify({
+                                  body: JSON.stringify({
                                     "id" : result.id,
                                     "friends" : friends,
                                     "name" : result.name,
                                     "location" : result.location.name
-                                  })
+                                  }),
+                                  headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json',
+                                  }
                                 })
                                 .then((response) => response.json())
                                 .catch((error) => { console.log(error) });

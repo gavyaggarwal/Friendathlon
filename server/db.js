@@ -68,5 +68,9 @@ module.exports = {
     col.find().toArray(function(err, documents) {
       //console.log(documents);
     });
+  },
+  debugClear: function() {
+    db.collection('users').remove({});
+    db.collection('activities').remove({});
   }
 }

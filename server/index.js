@@ -401,6 +401,11 @@ app.get('/debugDump', verifyDB, function (req, res) {
   });
 });
 
+app.get('/debugClear', verifyDB, function (req, res) {
+  db.debugClear();
+  sendObject(res, {});
+});
+
 app.get('/pagecount', verifyDB, function (req, res) {
   sendObject(res, {});
 });
