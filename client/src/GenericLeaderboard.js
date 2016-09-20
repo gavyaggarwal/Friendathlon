@@ -33,10 +33,25 @@ class ActivityCard extends Component {
 
   render () {
     activity = this.props.info.activity;
-    info = this.props.info
+    info = this.props.info;
+    switch(activity) {
+      case "walking":
+          path = require('./icons/walking.png')
+          break;
+      case "running":
+          path = require('./icons/running.png')
+          break;
+      case "cycling":
+          path = require('./icons/cycling.png')
+          break;
+      default:
+          path = '';
+    }
+
     return (
     <View style={[Styles.card, Styles[activity + 'Border']]}>
       <View style={[Styles.cardHead, Styles[activity + 'Bkgd']]}>
+        <Image source={path}/>
         <Text style={Styles.cardHeadText}>
           {this.header(activity)}
         </Text>
