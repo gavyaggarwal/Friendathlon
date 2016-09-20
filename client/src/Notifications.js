@@ -16,11 +16,14 @@ module.exports = {
           if (userID !== null) {
             fetch('http://www.friendathlon.com/updateProfile', {
               method: 'POST',
-              body:
-                JSON.stringify({
-                  "id" : userID,
-                  "notificationToken" : token
-                })
+              body: JSON.stringify({
+                "id" : userID,
+                "notificationToken" : token
+              }),
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              }
             });
           }
         } catch (error) {
