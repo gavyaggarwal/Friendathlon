@@ -21,17 +21,23 @@ class ActivityCard extends Component {
       </View>
       <View style={Styles.cardBody}>
         <Text style={Styles.cardBodyTextHdr}>
-          {this.props.activity}
+          Daily
+        </Text>
+        <Text style={Styles.cardBodyText}>
         </Text>
       </View>
       <View style={Styles.cardBody}>
         <Text style={Styles.cardBodyTextHdr}>
-          {this.props.activity}
+          Weekly
+        </Text>
+        <Text style={Styles.cardBodyText}>
         </Text>
       </View>
       <View style={Styles.cardBody}>
         <Text style={Styles.cardBodyTextHdr}>
-          {this.props.activity}
+          Monthly
+        </Text>
+        <Text style={Styles.cardBodyText}>
         </Text>
       </View>
     </View>
@@ -91,9 +97,25 @@ export default class GenericLeaderboard extends Component {
         ]
       }
 
-    data = data['leaderboards'];
+    const pastTense = {
+      "walking" : "walked",
+      "running" : "ran",
+      "cycling" : "cycled"
+    }
 
+    const activityHeaders = {
+      "walking" : "Walking",
+      "running" : "Running",
+      "cycling" : "Cycling"
+    }
+
+    data = data['leaderboards'];
     var cards = [];
+    for (var i = 0; i < data.length; i++) {
+
+    }
+
+
 
     return (
       <View style={Styles.container}>
