@@ -394,9 +394,10 @@ app.get('/', verifyDB, function (req, res) {
   });*/
 });
 
-app.get('/pagecount', verifyDB, function (req, res) {
-  req.db.collection('counts').count(function(err, count ){
-    res.send('{ pageCount: ' + count + '}');
+app.get('/debugDump', verifyDB, function (req, res) {
+  var col = req.db.collection('users');
+  col.find().toArray(function(err, documents) {
+    sendObject(res, documents);
   });
 });
 
