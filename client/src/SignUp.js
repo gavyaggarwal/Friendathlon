@@ -4,7 +4,9 @@ import {
   TouchableHighlight,
   View,
   Animated,
-  Alert
+  Alert,
+  AsyncStorage,
+  Linking
 } from 'react-native';
 
 const FBSDK = require('react-native-fbsdk');
@@ -36,7 +38,7 @@ export default class SignUp extends Component {
     let that = this;
 
     this.onPressButton = function() {
-        that.props.navigator.push({id: "specific"});
+      that.props.navigator.push({id: "specific"});
     };
   }
 
@@ -56,24 +58,29 @@ export default class SignUp extends Component {
                                 alert('error')
                               }
                               else {
-                                alert(JSON.stringify({
-                                  "id" : result.id,
-                                  "friends" : result.friends.data,
-                                  "name" : result.name,
-                                  "location" : result.location.name
-                                }))
+                                try {
+                                  AsyncStorage.setItem("FBID", JSON.stringify(result.id));
+                                }
+                                catch (error) {
+                                  alert(error)
+                                }
+
+                                var friends = [];
+                                for (var i = 0; i < result.friends.data.length; i++) {
+                                  friends.push(result.friends.data[i].id)
+                                };
                                 fetch('http://www.friendathlon.com/updateProfile', {
                                   method: 'POST',
                                   body:
                                   JSON.stringify({
                                     "id" : result.id,
-                                    "friends" : result.friends.data,
+                                    "friends" : friends,
                                     "name" : result.name,
                                     "location" : result.location.name
                                   })
                                 })
-                                .then((response) => response.json())
-                                .catch((error) => { alert(error) });
+                                //.then((response) => response.json())
+                                //.catch((error) => { alert(error) });
                               }
                     })
 
@@ -109,8 +116,31 @@ export default class SignUp extends Component {
     );
   }
 
-  connectWithMoves() {
-
+  async connectWithMoves() {
+    try {
+      var FBID = await AsyncStorage.getItem('FBID');
+      if (FBID !== null){
+        FBID = FBID.replace(/"/g, '');
+        const url = 'moves://app/authorize?client_id=w13CA903PnotFEqh8qGVhFAS_nRoSM22&redirect_uri=http://www.friendathlon.com/auth&scope=activity&state=' + FBID;
+        Linking.openURL(url).catch(err => console.error('An error occurred', err));
+      } else {
+        Alert.alert(
+          'Warning',
+          'Please login to Facebook before connecting to Moves.',
+          [
+            {text: 'OK'},
+          ]
+        )
+      }
+    } catch (error) {
+      alert(error);
+    }
+    try {
+      AsyncStorage.setItem("readyStatus", "ready");
+    }
+    catch (error) {
+      alert(error)
+    }
   }
 
   render() {
@@ -133,7 +163,7 @@ export default class SignUp extends Component {
           <Text style={Styles.instructions}>
             And getting your Moves:
           </Text>
-          <MovesIcon.Button name="moves" backgroundColor="#00d45a" onPress={this.loginWithFacebook}>
+          <MovesIcon.Button name="moves" backgroundColor="#00d45a" onPress={this.connectWithMoves}>
             Connect to Moves
           </MovesIcon.Button>
         </View>

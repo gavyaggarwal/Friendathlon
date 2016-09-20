@@ -62,8 +62,8 @@ var exports = module.exports = StyleSheet.create({
     borderColor: '#000',
     borderWidth: 2,
     marginTop: 10,
-    marginBottom: 10,
-    marginLeft: 10,
+    marginBottom: 20,
+    marginLeft: 20,
     borderRadius: 10,
   },
   cardHead: {
@@ -72,10 +72,20 @@ var exports = module.exports = StyleSheet.create({
     borderTopLeftRadius: 9,
   },
   cardHeadText: {
-    fontSize: 30,
-    color: '#fff'
+    fontSize: 25,
+    color: '#fff',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'alegreyasans',
   },
   cardBody: {
     flex:1,
+    justifyContent: 'center',
+  },
+  cardBodyText: {
+    fontSize: 15,
+    marginLeft: 10,
+    fontFamily: 'alegreyasans',
   }
 });

@@ -4,7 +4,8 @@ import {
   Image,
   TouchableHighlight,
   ScrollView,
-  View
+  View,
+  Dimensions
 } from 'react-native';
 
 import Styles from './Styles';
@@ -14,25 +15,22 @@ class ActivityCard extends Component {
     return (
     <View style={Styles.card}>
       <View style={Styles.cardHead}>
-        <Image
-          source={require('../../mocks/movesLogo.png')}
-        />
         <Text style={Styles.cardHeadText}>
           {this.props.activity}
         </Text>
       </View>
       <View style={Styles.cardBody}>
-        <Text>
+        <Text style={Styles.cardBodyText}>
           {this.props.activity}
         </Text>
       </View>
       <View style={Styles.cardBody}>
-        <Text>
+        <Text style={Styles.cardBodyText}>
           {this.props.activity}
         </Text>
       </View>
       <View style={Styles.cardBody}>
-        <Text>
+        <Text style={Styles.cardBodyText}>
           {this.props.activity}
         </Text>
       </View>
@@ -50,15 +48,18 @@ export default class GenericLeaderboard extends Component {
         that.props.navigator.push({id: "specific"});
       };
   }
+
   render() {
+    var cards = [];
+
     return (
-      <View>
+      <View style={Styles.container}>
         <View style={Styles.toolbar}>
           <Text style={Styles.toolbarTitle}>Friendathlon Leaderboards</Text>
           <Text style={Styles.toolbarButton}></Text>
         </View>
         <View style={{flex:1}}>
-          <ScrollView horizontal style={{flex:1}}>
+          <ScrollView horizontal>
             <ActivityCard activity='Walking'>
             </ActivityCard>
             <ActivityCard activity='Running'>
