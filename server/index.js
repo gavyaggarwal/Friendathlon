@@ -6,7 +6,8 @@
  *                 "id": <FBID>,
  *                 "friends": [<FBFRIENDID>,...],
  *                 "name": <FB NAME>,
- *                 "location": <LOCATION STRING (eg. Newark, DE)>
+ *                 "location": <LOCATION STRING (eg. Newark, DE)>,
+ *                 "notificationToken": <notificationToken>
  *               }
  *
  * /getProfile (GET) - Returns information for a user
@@ -67,17 +68,25 @@ function getDistances(item, activity) {
 
 app.post('/updateProfile', verifyDB, function (req, res) {
   assert(req.body.id);
-  assert(req.body.friends);
-  assert(req.body.name);
+
+  var newVals = {};
+  if (req.body.friends) {
+    newVals.friends = req.body.friends;
+  }
+  if (req.body.name) {
+    newVals.name = req.body.name;
+  }
+  if (req.body.location) {
+    newVals.location = req.body.location;
+  }
+  if (req.body.notificationToken) {
+    newVals.notificationToken = req.body.notificationToken;
+  }
   var col = req.db.collection('users');
   col.updateOne(
     { "id": req.body.id },
     {
-      $set: {
-        "friends": req.body.friends,
-        "name": req.body.name,
-        "location": req.body.location
-      },
+      $set: newVals,
       $currentDate: { "lastModified": true }
     },
     {
