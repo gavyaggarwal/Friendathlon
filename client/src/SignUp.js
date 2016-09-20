@@ -46,7 +46,7 @@ export default class SignUp extends Component {
     LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'user_location']).then(
       function(result) {
         if (result.isCancelled) {
-          alert('Login cancelled');
+          console.log('Login cancelled');
         } else {
 
           AccessToken.getCurrentAccessToken().then(
@@ -55,19 +55,19 @@ export default class SignUp extends Component {
 
                     const responseCallback = ((error, result) => {
                               if (error) {
-                                alert('error')
+                                console.log('error')
                               }
                               else {
                                 try {
-                                  AsyncStorage.setItem("FBID", JSON.stringify(result.id));
+                                  AsyncStorage.setItem("FBID", (result.id).toString());
                                 }
                                 catch (error) {
-                                  alert(error)
+                                  console.log(error)
                                 }
 
                                 var friends = [];
                                 for (var i = 0; i < result.friends.data.length; i++) {
-                                  friends.push(JSON.stringify(result.friends.data[i].id))
+                                  friends.push((result.friends.data[i].id).toString())
                                 };
 
                                 fetch('http://www.friendathlon.com/updateProfile', {
@@ -80,8 +80,8 @@ export default class SignUp extends Component {
                                     "location" : result.location.name
                                   })
                                 })
-                                //.then((response) => response.json())
-                                //.catch((error) => { alert(error) });
+                                .then((response) => response.json())
+                                .catch((error) => { console.log(error) });
                               }
                     })
 
@@ -112,7 +112,7 @@ export default class SignUp extends Component {
         }
       },
       function(error) {
-        alert('Login fail with error: ' + error);
+        console.log('Login fail with error: ' + error);
       }
     );
   }
@@ -134,13 +134,13 @@ export default class SignUp extends Component {
         )
       }
     } catch (error) {
-      alert(error);
+      console.log(error);
     }
     try {
       AsyncStorage.setItem("readyStatus", "ready");
     }
     catch (error) {
-      alert(error)
+      console.log(error)
     }
   }
 
