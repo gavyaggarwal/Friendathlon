@@ -57,13 +57,14 @@ var exports = module.exports = StyleSheet.create({
     fontSize: 25,
   },
   card: {
-    width: 200,
+    width: 230,
     flex:1,
     borderColor: 'blue',
     borderWidth: 2,
     marginTop: 10,
     marginBottom: 20,
-    marginLeft: 20,
+    marginLeft: 10,
+    marginRight: 10,
     borderRadius: 10,
   },
   cardHead: {
@@ -95,6 +96,32 @@ var exports = module.exports = StyleSheet.create({
   },
   activityIcon: {
     tintColor: 'white',
-    
+  },
+  walking: {
+    color: '#00d55a'
+  },
+  walkingBkgd: {
+    backgroundColor: '#00d55a',
+  },
+  walkingBorder: {
+    borderColor: '#00d55a',
+  },
+  running: {
+    color: '#f660f4'
+  },
+  runningBkgd: {
+    backgroundColor: '#f660f4'
+  },
+  runningBorder: {
+    borderColor: '#f660f4'
+  },
+  cycling: {
+    color: '#00cdec'
+  },
+  cyclingBkgd: {
+    backgroundColor: '#00cdec'
+  },
+  cyclingBorder: {
+    borderColor: '#00cdec'
   }
 });
