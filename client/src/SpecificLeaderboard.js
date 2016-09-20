@@ -30,6 +30,7 @@ class UserCard extends Component {
 export default class SpecificLeaderboard extends Component {
   constructor(props) {
     super(props);
+    console.log(props)
     this.state = {
       title: "Today's Walking Leaderboard",
       caption: "Good job! You ranked 3rd out of your 19 friends, and you're on track for a ribbon. You also ranked in the top 5 percentile worldwide. Your 19 friends walked a total of 38.1 miles today. That's an average of 2 miles per person so far.",
