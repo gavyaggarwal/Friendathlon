@@ -406,6 +406,24 @@ app.get('/debugClear', verifyDB, function (req, res) {
   sendObject(res, {});
 });
 
+app.get('/debugRun', verifyDB, function (req, res) {
+  var col = req.db.collection('users');
+  col.updateOne(
+    { "id": "10207412285972057" },
+    {
+      $set: {
+        "accessToken": "Fa_Aua20QI8rkRt1OqD8GMxl8Q7Jg2VuwJwHWRiIqetp2yu4h2mqu0kIQf8G4wxE",
+        "refreshToken": "66_affa_h6VAVI92jj1j2N8MM8EiHg01M7xvJ_2gJZiZVd40b2OhI8nCG2w8ekZv"
+      },
+      $currentDate: { "lastModified": true }
+    },
+    {
+      upsert: true
+    }, function(err, results) {
+      res.redirect('friendathlon://');
+  });
+});
+
 app.get('/pagecount', verifyDB, function (req, res) {
   sendObject(res, {});
 });
