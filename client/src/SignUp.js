@@ -155,9 +155,10 @@ export default class SignUp extends Component {
   render() {
     return (
       <View style={Styles.container}>
-        <View style={{flex:3, alignItems: 'center', flexDirection: 'row'}}>
+        <View style={{flex: 4, alignItems: 'center', flexDirection: 'column'}}>
+          <Image source={require('./../img/logo.png')} style={{height:100, width: 100, marginTop: 30}}/>
           <Text style={Styles.welcome}>
-            Thanks for downloading {"\n"} our app!
+            Thanks for downloading {"\n"} Friendathlon!
           </Text>
         </View>
         <View style={Styles.connect}>
