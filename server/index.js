@@ -308,7 +308,11 @@ app.get('/specificLeaderboard', verifyDB, function (req, res) {
          for (var i = 0; i < friends.length; i++) {
            var friend = friends[i];
            friend.rank = i + 1;
-           friend.progress = friend.distance / maxDistance;
+           if (maxDistance != 0) {
+             friend.progress = friend.distance / maxDistance;
+           } else {
+             friend.progress = 1;
+           }
            if (friend.me) {
              myRank = friend.rank;
            }

@@ -30,14 +30,11 @@ var token = '';
 
 export default class SignUp extends Component {
   constructor(props) {
-
     super(props);
 
-    let that = this;
-
-    this.onPressButton = function() {
-      that.props.navigator.push({id: "specific"});
-    };
+    this.state = {
+      userID: null
+    }
   }
 
   loginWithFacebook() {
@@ -119,9 +116,10 @@ export default class SignUp extends Component {
   }
 
   async connectWithMoves() {
+    var that = this;
     try {
       var FBID = await AsyncStorage.getItem('FBID');
-      if (FBID !== null){
+      if (FBID !== null) {
         const url = 'moves://app/authorize?client_id=w13CA903PnotFEqh8qGVhFAS_nRoSM22&redirect_uri=http://www.friendathlon.com/auth&scope=activity&state=' + FBID;
         Linking.canOpenURL(url).then(supported => {
           if (!supported) {
@@ -131,7 +129,15 @@ export default class SignUp extends Component {
           else {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));
           }
-        }).catch(err => console.error('An error occurred dfsd', err));;
+          var timer = setInterval(async function() {
+            let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
+            let responseJson = await response.json();
+            if (responseJson.validUser) {
+              clearInterval(timer);
+              that.finishCallback(FBID);
+            }
+          }, 5000);
+        }).catch(err => console.error('An error occurred', err));;
       } else {
         Alert.alert(
           'Warning',
@@ -156,7 +162,7 @@ export default class SignUp extends Component {
         </View>
         <View style={Styles.connect}>
           <Text style={Styles.instructions}>
-            Let''s start by finding your friends:
+            Let's start by finding your friends:
           </Text>
           <TouchableHighlight style={[Styles.btn, {backgroundColor:"#3b5998"}]} onPress={this.loginWithFacebook}>
             <View style={Styles.btnView}>
@@ -171,7 +177,7 @@ export default class SignUp extends Component {
           <Text style={Styles.instructions}>
             And getting your Moves:
           </Text>
-          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00d45a"}]} onPress={this.connectWithMoves}>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00d45a"}]} finishCallback={this.props.signUpComplete} onPress={this.connectWithMoves}>
             <View style={Styles.btnView}>
               <Image source = {require('./../img/moves.png')} style={Styles.btnIcon}/>
               <Text style={Styles.btnText}>
@@ -182,7 +188,7 @@ export default class SignUp extends Component {
         </View>
         <View style={{flex:1, alignItems: 'center',}}>
           <Text style={Styles.instructions}>
-            And you''ll be set to compete with your friends!
+            And you'll be set to compete with your friends!
           </Text>
         </View>
       </View>

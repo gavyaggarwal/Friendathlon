@@ -14,6 +14,9 @@ import Styles from './Styles';
 const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
 
 class ActivityCard extends Component {
+  metersToMiles(meters) {
+    return (Math.round(meters * 0.000621371 * 10) / 10.0)
+  }
   pastTense(verb) {
     const pastTense = {
       "walking" : "walked",
@@ -32,8 +35,8 @@ class ActivityCard extends Component {
   }
   render () {
 
-    activity = this.props.info.activity;
-    info = this.props.info;
+    var activity = this.props.info.activity;
+    var info = this.props.info;
     switch(activity) {
       case "walking":
           path = require('./../img/walking.png');
@@ -61,7 +64,7 @@ class ActivityCard extends Component {
           Daily
         </Text>
         <Text style={Styles.cardBodyText}>
-        You {this.pastTense(activity)} <B>{info.daily.distance}</B> miles today. {"\n"}
+        You {this.pastTense(activity)} <B>{this.metersToMiles(info.daily.distance)}</B> miles today. {"\n"}
         You rank <B>{info.daily.rank}</B> out of <B>{info.daily.total}</B>.
         </Text>
         <Text style={[Styles.cardBodyText, Styles[activity]]} period="day" activity={activity} onPress={this.props.buttonCallback}>
@@ -73,7 +76,7 @@ class ActivityCard extends Component {
           Weekly
         </Text>
         <Text style={Styles.cardBodyText}>
-        You {this.pastTense(activity)} <B>{info.weekly.distance}</B> miles this week. {"\n"}
+        You {this.pastTense(activity)} <B>{this.metersToMiles(info.weekly.distance)}</B> miles this week. {"\n"}
         You rank <B>{info.weekly.rank}</B> out of <B>{info.weekly.total}</B>.
         </Text>
         <Text style={[Styles.cardBodyText, Styles[activity]]} period="week" activity={activity} onPress={this.props.buttonCallback}>
@@ -85,7 +88,7 @@ class ActivityCard extends Component {
           Monthly
         </Text>
         <Text style={Styles.cardBodyText}>
-        You {this.pastTense(activity)} <B>{info.monthly.distance}</B> miles this month. {"\n"}
+        You {this.pastTense(activity)} <B>{this.metersToMiles(info.monthly.distance)}</B> miles this month. {"\n"}
         You rank <B>{info.monthly.rank}</B> out of <B>{info.monthly.total}</B>.
         </Text>
         <Text style={[Styles.cardBodyText, Styles[activity]]} period="month" activity={activity} onPress={this.props.buttonCallback}>
@@ -111,83 +114,25 @@ export default class GenericLeaderboard extends Component {
         }
       });
     };
-    /*
-    try {
-      var FBID = await AsyncStorage.getItem('FBID');
-      if (FBID !== null){
-        fetch('http://www.friendathlon.com/genericLeaderboard?id=' + FBID)
-        .then((response) => response.json())
-        .then((responseJson) => { this.cards = responseJson.leaderboards })
-        .catch((error) => { console.error(error); });
-      }
-    } catch (error) {
-      console.log(error);
+
+    this.state = {
+      leaderboards: []
     }
 
-    */
-    var data = {
-        leaderboards: [
-          {
-            activity: "walking",
-            daily: {
-              distance: 3.4,
-              rank: 3,
-              total: 5
-            },
-            weekly: {
-              distance: 14,
-              rank: 5,
-              total: 19
-            },
-            monthly: {
-              distance: 39,
-              rank: 8,
-              total: 24
-            }
-          },
-          {
-            activity: "running",
-            daily: {
-              distance: 0.5,
-              rank: 4,
-              total: 5
-            },
-            weekly: {
-              distance: 0.5,
-              rank: 12,
-              total: 19
-            },
-            monthly: {
-              distance: 4,
-              rank: 12,
-              total: 24
-            }
-          },
-          {
-            activity: "cycling",
-            daily: {
-              distance: 0.5,
-              rank: 4,
-              total: 5
-            },
-            weekly: {
-              distance: 0.5,
-              rank: 12,
-              total: 19
-            },
-            monthly: {
-              distance: 4,
-              rank: 12,
-              total: 24
-            }
-          }
-        ]
+    var userID = this.props.data.userID;
+    (async function() {
+      try {
+        let response = await fetch('http://www.friendathlon.com/genericLeaderboard?id=' + userID);
+        let json = await response.json();
+        that.setState(json);
+      } catch(error) {
+        console.error(error);
       }
-    this.cards = data['leaderboards'];
+    })();
   }
 
   render() {
-    let cards = this.cards.map((card, i) => {
+    let cards = this.state.leaderboards.map((card, i) => {
         return <ActivityCard key={i} info={card} buttonCallback={this.onPressButton} />
     })
 
