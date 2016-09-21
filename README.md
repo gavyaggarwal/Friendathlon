@@ -1,11 +1,11 @@
 #Friendathlon
-### A project by Gavy Aggarwal and Abirami-Kurinchi Vendhan
+#### A project by Gavy Aggarwal and Abirami-Kurinchi Vendhan
 
- is a next-generation fitness app that puts you head to head with all your friends. Unlike existing fitness apps that primarily focus on personal growth and are catered towards professional athletes, Friendathlon is developed just for people like you and I who are trying to make their everyday lives healthier and looking for a bit of extra motivation to go on that run, walk more, take a bike ride, you name it.
+ Friendathlon is a next-generation fitness app that puts you head to head with all your friends. Unlike existing fitness apps that primarily focus on personal growth and are catered towards professional athletes, Friendathlon is developed just for people like you and I who are trying to make their everyday lives healthier and looking for a bit of extra motivation to go on that run, walk more, take a bike ride, you name it.
 
 Friendathlon throws you and your friends amongst each other in leaderboards that show how much you've walked, ran, and biked so that you remain motivated (or ashamed) into beating them and staying fit. By being stacked up against your friends, we sweeten the deal. You don't just go outside and get moving to stay fit, but also to earn bragging rights. And to make sure the competition keeps going, we send contextual reminders and updates on your friends' activities so you can keep ahead and stay at the top of the leaderboards.
 
-## Our Philosophy
+### Our Philosophy
 
 We know that there's tons of fitness apps out there with complex features. However, our goal wasn't to compete with them, but to create an app that everyday people would love to use, and in order to do that, we focused on the following user experience features:
 
@@ -17,7 +17,7 @@ We know that there's tons of fitness apps out there with complex features. Howev
 
 - **Motivational Reminders**: We know how few people stick to their New Year's Resolutions. It's hard sticking to a workout regime. Doing it with friends will make it easier for people to stay in shape, but Friendathlon gives an extra helping hand by sending users motivational notifications. But these aren't just your run-of-the-mill, canned notifications. When a user wakes up after a good night’s sleep, we send her a notification reminding her to go for a bike ride today. Or if she's returning from a run, we update her leaderboard and let her know how many friends she’s now in front of. But instead, if she's just sitting around at home, we tell her to get off the couch and partake in her favorite activity. And finally, when she’s in bed and ready to call it a day, we give her a summary of her progress and how she stacks up against her friends.
 
-## What's Next for Friendathlon
+### What's Next for Friendathlon
 
 After building this app for the hackathon, we've decided that we want to pursue it further and releasing as a finished product. Here's how we plan on making that happen:
 
