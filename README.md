@@ -1,7 +1,7 @@
 #Friendathlon
 #### A project by Gavy Aggarwal and Abirami-Kurinchi Vendhan
 
- Friendathlon is a next-generation fitness app that puts you head to head with all your friends. Unlike existing fitness apps that primarily focus on personal growth and are catered towards professional athletes, Friendathlon is developed just for people like you and I who are trying to make their everyday lives healthier and looking for a bit of extra motivation to go on that run, walk more, take a bike ride, you name it.
+Friendathlon is a next-generation fitness app that puts you head to head with all your friends. Unlike existing fitness apps that primarily focus on personal growth and are catered towards professional athletes, Friendathlon is developed just for people like you and I who are trying to make their everyday lives healthier and looking for a bit of extra motivation to go on that run, walk more, take a bike ride, you name it.
 
 Friendathlon throws you and your friends amongst each other in leaderboards that show how much you've walked, ran, and biked so that you remain motivated (or ashamed) into beating them and staying fit. By being stacked up against your friends, we sweeten the deal. You don't just go outside and get moving to stay fit, but also to earn bragging rights. And to make sure the competition keeps going, we send contextual reminders and updates on your friends' activities so you can keep ahead and stay at the top of the leaderboards.
 
