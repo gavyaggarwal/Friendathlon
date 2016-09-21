@@ -2,8 +2,9 @@ var config = require('./config.js'),
     db     = require('./db.js'),
     logic  = require('./logic.js');
 
-const ONE_SECOUND = 1000;
-const ONE_HOUR = 60 * 60 * ONE_SECOUND;
+const ONE_SECOND = 1000;
+const ONE_MINUTE = 60 * ONE_SECOND;
+const ONE_HOUR = 60 * ONE_MINUTE;
 const ONE_DAY = 24 * ONE_HOUR;
 
 var request = require('request');
@@ -174,13 +175,12 @@ function generateCompetitionNotifications() {
       });
     }
   }
-  setInterval(task, ONE_HOUR);
+  setInterval(task, 30 * ONE_MINUTE);
 }
 
 module.exports = {
   start: function() {
-    //startMovesDataScraping();
-    //sendNotification("f3yh6BRJ0Bw:APA91bGLjnLNT0vzFcGOQ6o0SUOe33Gtmz3MalmxIxMuVn1TSTyfP2bRKpSGyuyV2rizzqdVm85GAUOB9lP598HBxUs9L-54sG_igcgqMD80cTSrHC3a72OVPJELh6j1XkWVc3HKjf2O", "Thanks for using this app. You're awesome!");
+    startMovesDataScraping();
     generateCompetitionNotifications();
   }
 }
