@@ -19,6 +19,8 @@ const {
 
 import Styles from './Styles';
 
+const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+
 class UserCard extends Component {
   render () {
     if (this.props.data.me) {
@@ -39,8 +41,8 @@ class UserCard extends Component {
       </View>
       <View style={Styles.infoView}>
         <View style={Styles.userInfo}>
-          <Text style={[Styles.info, textColor]}>{this.props.data.name} • {this.props.data.location}</Text>
-          <Text style={[Styles.info, textColor]}> {Math.round(this.props.data.distance * 0.000621371)} mi </Text>
+          <Text style={[Styles.info, textColor]}><B>{this.props.data.name}</B> • {this.props.data.location}</Text>
+          <Text style={[Styles.info, textColor]}><B>{Math.round(this.props.data.distance * 0.000621371)} mi</B></Text>
         </View>
         <View style={Styles.progressView}>
           <View style={[Styles.progress, {flex: this.props.data.progress}, progressColor]}/>

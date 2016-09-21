@@ -78,7 +78,7 @@ class Friendathlon extends Component {
       return (<SignUp signUpComplete={this.signUpComplete} />);
     } else if (this.state.userID == null) {
       return (
-        <Text>Loading</Text>
+        <View style={{flex: 1, backgroundColor: '#F5F3E9'}}/>
       );
     } else {
       return (

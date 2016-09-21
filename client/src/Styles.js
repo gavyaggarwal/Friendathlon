@@ -191,7 +191,8 @@ module.exports = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: -5
   },
   progress: {
     height: 10,
@@ -202,5 +203,6 @@ module.exports = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     alignItems: 'center',
+    marginTop: -5
   }
 });
