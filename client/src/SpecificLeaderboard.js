@@ -42,7 +42,6 @@ export default class SpecificLeaderboard extends Component {
     };
     return pastTense[verb];
   }
-
   header(verb) {
     const headers = {
       "walking" : "Walking",
@@ -51,7 +50,6 @@ export default class SpecificLeaderboard extends Component {
     };
     return headers[verb];
   }
-
   periodMap(time) {
     const headers = {
       "day" : "today",
@@ -60,7 +58,6 @@ export default class SpecificLeaderboard extends Component {
     };
     return headers[time];
   }
-
   headerTime(time) {
     const headers = {
       "day" : "Today's",
@@ -69,7 +66,6 @@ export default class SpecificLeaderboard extends Component {
     };
     return headers[time];
   }
-
   constructor(props) {
     super(props);
     var userID = props.data.userID;
@@ -129,7 +125,7 @@ export default class SpecificLeaderboard extends Component {
       return (
         <View style={Styles.container}>
           <ScrollView style={localStyles.scrollView}>
-            <Text style={localStyles.heading}>
+            <Text style={[localStyles.heading, Styles[this.props.data.activity]]}>
               {this.headerTime(this.props.data.period)} {this.header(this.props.data.activity)} Leaderboard
             </Text>
             <Text style={localStyles.caption}>
@@ -173,8 +169,7 @@ var localStyles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 4,
     fontWeight: 'bold',
-    fontFamily: 'alegreyasans',
-    color: '#00BCD4'
+    fontFamily: 'alegreyasans'
   },
   caption: {
     fontSize: 15,

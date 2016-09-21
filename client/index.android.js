@@ -47,10 +47,9 @@ class Friendathlon extends Component {
   }
   navigatorRenderScene(route, navigator) {
     _navigator = navigator;
-    console.log(route.data)
     switch (route.id) {
       case 'signup':
-        return (<SignUp navigator={navigator} />);
+        return (<SignUp data={route.data} navigator={navigator} />);
       case 'generic':
         return (<GenericLeaderboard data={route.data} navigator={navigator} />);
       case 'specific':

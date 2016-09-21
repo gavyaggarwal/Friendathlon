@@ -22,7 +22,6 @@ class ActivityCard extends Component {
     };
     return pastTense[verb];
   }
-
   header(verb) {
     const headers = {
       "walking" : "Walking",
@@ -31,7 +30,6 @@ class ActivityCard extends Component {
     };
     return headers[verb];
   }
-
   render () {
 
     activity = this.props.info.activity;
@@ -104,15 +102,15 @@ export default class GenericLeaderboard extends Component {
 
     let that = this;
     this.onPressButton = function() {
-        that.props.navigator.push({
-          id: "specific",
-          data: {
-            userID: that.props.data.userID,
-            activity: this.activity,
-            period: this.period
-          }
-        });
-      };
+      that.props.navigator.push({
+        id: "specific",
+        data: {
+          userID: that.props.data.userID,
+          activity: this.activity,
+          period: this.period
+        }
+      });
+    };
     /*
     try {
       var FBID = await AsyncStorage.getItem('FBID');
