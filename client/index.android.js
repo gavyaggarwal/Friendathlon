@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   AsyncStorage,
+  BackAndroid,
   Navigator,
   Text,
   View
@@ -11,6 +12,16 @@ import SignUp from './src/SignUp';
 import GenericLeaderboard from './src/GenericLeaderboard';
 import SpecificLeaderboard from './src/SpecificLeaderboard';
 import Notifications from './src/Notifications';
+
+var navigator;
+
+BackAndroid.addEventListener('hardwareBackPress', function() {
+    if (navigator && navigator.getCurrentRoutes().length > 1) {
+        navigator.pop();
+        return true;
+    }
+    return false;
+});
 
 class Friendathlon extends Component {
   constructor(props) {
@@ -71,7 +82,7 @@ class Friendathlon extends Component {
       );
     } else {
       return (
-        <Navigator initialRoute={{
+        <Navigator ref={(nav) => { navigator = nav; }} initialRoute={{
             id: 'generic',
             data: {
               userID: this.state.userID

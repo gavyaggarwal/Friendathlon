@@ -129,10 +129,11 @@ export default class SignUp extends Component {
           else {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));
           }
-          setInterval(async function() {
+          var timer = setInterval(async function() {
             let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
             let responseJson = await response.json();
             if (responseJson.validUser) {
+              clearInterval(timer);
               that.finishCallback(FBID);
             }
           }, 5000);

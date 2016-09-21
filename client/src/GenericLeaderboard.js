@@ -124,7 +124,6 @@ export default class GenericLeaderboard extends Component {
       try {
         let response = await fetch('http://www.friendathlon.com/genericLeaderboard?id=' + userID);
         let json = await response.json();
-        console.log(json)
         that.setState(json);
       } catch(error) {
         console.error(error);
