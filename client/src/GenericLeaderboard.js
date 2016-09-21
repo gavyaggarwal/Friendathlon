@@ -22,7 +22,6 @@ class ActivityCard extends Component {
     };
     return pastTense[verb];
   }
-
   header(verb) {
     const headers = {
       "walking" : "Walking",
@@ -31,8 +30,8 @@ class ActivityCard extends Component {
     };
     return headers[verb];
   }
-
   render () {
+
     activity = this.props.info.activity;
     info = this.props.info;
     switch(activity) {
@@ -65,7 +64,7 @@ class ActivityCard extends Component {
         You {this.pastTense(activity)} <B>{info.daily.distance}</B> miles today. {"\n"}
         You rank <B>{info.daily.rank}</B> out of <B>{info.daily.total}</B>.
         </Text>
-        <Text style={[Styles.cardBodyText, Styles[activity]]}>
+        <Text style={[Styles.cardBodyText, Styles[activity]]} period="day" activity={activity} onPress={this.props.buttonCallback}>
         More Info
         </Text>
       </View>
@@ -77,7 +76,7 @@ class ActivityCard extends Component {
         You {this.pastTense(activity)} <B>{info.weekly.distance}</B> miles this week. {"\n"}
         You rank <B>{info.weekly.rank}</B> out of <B>{info.weekly.total}</B>.
         </Text>
-        <Text style={[Styles.cardBodyText, Styles[activity]]}>
+        <Text style={[Styles.cardBodyText, Styles[activity]]} period="week" activity={activity} onPress={this.props.buttonCallback}>
         More Info
         </Text>
       </View>
@@ -89,7 +88,7 @@ class ActivityCard extends Component {
         You {this.pastTense(activity)} <B>{info.monthly.distance}</B> miles this month. {"\n"}
         You rank <B>{info.monthly.rank}</B> out of <B>{info.monthly.total}</B>.
         </Text>
-        <Text style={[Styles.cardBodyText, Styles[activity]]}>
+        <Text style={[Styles.cardBodyText, Styles[activity]]} period="month" activity={activity} onPress={this.props.buttonCallback}>
         More Info
         </Text>
       </View>
@@ -99,14 +98,19 @@ class ActivityCard extends Component {
 
 export default class GenericLeaderboard extends Component {
   constructor(props) {
-
     super(props);
 
     let that = this;
-
     this.onPressButton = function() {
-        that.props.navigator.push({id: "specific"});
-      };
+      that.props.navigator.push({
+        id: "specific",
+        data: {
+          userID: that.props.data.userID,
+          activity: this.activity,
+          period: this.period
+        }
+      });
+    };
     /*
     try {
       var FBID = await AsyncStorage.getItem('FBID');
@@ -184,8 +188,7 @@ export default class GenericLeaderboard extends Component {
 
   render() {
     let cards = this.cards.map((card, i) => {
-        return <ActivityCard key = {  i } info = { card } >
-               </ActivityCard>
+        return <ActivityCard key={i} info={card} buttonCallback={this.onPressButton} />
     })
 
     return (

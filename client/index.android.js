@@ -49,11 +49,11 @@ class Friendathlon extends Component {
     _navigator = navigator;
     switch (route.id) {
       case 'signup':
-        return (<SignUp navigator={navigator} />);
+        return (<SignUp data={route.data} navigator={navigator} />);
       case 'generic':
-        return (<GenericLeaderboard userID={route.userID} navigator={navigator} />);
+        return (<GenericLeaderboard data={route.data} navigator={navigator} />);
       case 'specific':
-        return (<SpecificLeaderboard userID={route.userID} navigator={navigator} />);
+        return (<SpecificLeaderboard data={route.data} navigator={navigator} />);
     }
   }
   render() {
@@ -66,7 +66,7 @@ class Friendathlon extends Component {
       );
     } else {
       return (
-        <Navigator initialRoute={{id: 'generic', userID: this.state.userID}} renderScene={this.navigatorRenderScene}/>
+        <Navigator initialRoute={{id: 'generic', data: {userID: this.state.userID}}} renderScene={this.navigatorRenderScene}/>
       );
     }
   }
