@@ -21,14 +21,32 @@ import Styles from './Styles';
 
 class UserCard extends Component {
   render () {
+    if (this.props.data.me) {
+      var textColor = {color: 'white'}
+      var progressColor = {backgroundColor: 'white'};
+      var cardColor = Styles[this.props.activity + 'Bkgd'];
+    }
+    else {
+      var textColor = {color: '#666'}
+      var progressColor = Styles[this.props.activity + 'Bkgd'];
+      var cardColor = {};
+    }
+
     return (
-    <View style={Styles.userCard}>
-      <Text style={Styles.rank}>{this.props.data.rank}</Text>
-      <Text style={Styles.name}>{this.props.data.name}</Text>
-      <Text style={Styles.location}>{this.props.data.location}</Text>
-      <Text style={Styles.distance}>{this.props.data.distance}</Text>
-      <Text style={Styles.progress}>{this.props.data.progress}</Text>
-      <Text style={Styles.rankView}>{this.props.data.me}</Text>
+    <View style={[Styles.userCard, cardColor]}>
+      <View style={{alignItems: 'center', width: 50,}}>
+        <Text style={[Styles.rank, textColor]}>{this.props.data.rank}</Text>
+      </View>
+      <View style={{flex:1, marginRight: 10,}}>
+        <View style={Styles.userInfo}>
+          <Text style={[Styles.info, textColor]}>{this.props.data.name} • {this.props.data.location}</Text>
+          <Text style={[Styles.info, textColor]}> {Math.round(this.props.data.distance * 0.000621371)} mi </Text>
+        </View>
+        <View style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
+          <View style={[Styles.progress, {flex: this.props.data.progress}, progressColor]}/>
+          <View style={{flex: (1-this.props.data.progress)}}/>
+        </View>
+      </View>
     </View>
   )}
 }
@@ -122,19 +140,20 @@ export default class SpecificLeaderboard extends Component {
       if (this.state.stats.friendTotal == 1) {
         friends = "friend";
       }
+      var activity = this.props.data.activity;
       return (
         <View style={Styles.container}>
           <ScrollView style={localStyles.scrollView}>
-            <Text style={[localStyles.heading, Styles[this.props.data.activity]]}>
-              {this.headerTime(this.props.data.period)} {this.header(this.props.data.activity)} Leaderboard
+            <Text style={[localStyles.heading, Styles[activity]]}>
+              {this.headerTime(this.props.data.period)} {this.header(activity)} Leaderboard
             </Text>
             <Text style={localStyles.caption}>
               {heading}You ranked {ranking} out of your {this.state.stats.friendTotal} {friends}{ribbonOnTrack}.
-              Your {this.state.stats.friendTotal} {friends} {this.pastTense(this.props.data.activity)} a total of {Math.round(this.state.stats.totalDistance * 0.000621371)} miles {this.periodMap(this.props.data.period)}.
+              Your {this.state.stats.friendTotal} {friends} {this.pastTense(activity)} a total of {Math.round(this.state.stats.totalDistance * 0.000621371)} miles {this.periodMap(this.props.data.period)}.
               That's an average of {Math.round(this.state.stats.averageDistance * 0.000621371)} miles per person so far.
             </Text>
             { this.state.friends.map(function(user) {
-              return <UserCard data={user} key={user.rank}></UserCard>;
+              return <UserCard data={user} key={user.rank} activity={activity}></UserCard>;
             }) }
           </ScrollView>
         </View>
@@ -145,14 +164,6 @@ export default class SpecificLeaderboard extends Component {
 }
 
 var localStyles = StyleSheet.create({
-  userCard: {
-    marginTop: 4,
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 4,
-    flex: 1,
-    flexDirection: "row"
-  },
   rankView: {
     backgroundColor: 'yellow',
     fontSize: 36,
