@@ -380,7 +380,6 @@ app.get('/', verifyDB, function (req, res) {
   db.debugDump();
   console.log(req.protocol + '://' + req.get('host') + '/token');
 
-
   config.oauth.get("https://api.moves-app.com/api/1.1/user/summary/daily/20160805", "Fa_Aua20QI8rkRt1OqD8GMxl8Q7Jg2VuwJwHWRiIqetp2yu4h2mqu0kIQf8G4wxE", function(err, result, response) {
     if (err) {
       console.log("error", err);
@@ -388,14 +387,6 @@ app.get('/', verifyDB, function (req, res) {
       sendObject(res, JSON.parse(result));
     }
   });
-
-  /*
-  var col = req.db.collection('counts');
-  // Create a document with request IP and current time of request
-  col.insert({ip: req.ip, date: Date.now()});
-  col.count(function(err, count){
-    res.send(JSON.stringify({ pageCountMessage : count, dbInfo: dbDetails }));
-  });*/
 });
 
 app.get('/debugDump', verifyDB, function (req, res) {
