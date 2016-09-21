@@ -22,13 +22,13 @@ import Styles from './Styles';
 class UserCard extends Component {
   render () {
     return (
-    <View style={localStyles.userCard}>
-      <Text style={localStyles.rankView}>{this.props.data.rank}</Text>
-      <Text style={localStyles.rankView}>{this.props.data.name}</Text>
-      <Text style={localStyles.rankView}>{this.props.data.location}</Text>
-      <Text style={localStyles.rankView}>{this.props.data.distance}</Text>
-      <Text style={localStyles.rankView}>{this.props.data.progress}</Text>
-      <Text style={localStyles.rankView}>{this.props.data.me}</Text>
+    <View style={Styles.userCard}>
+      <Text style={Styles.rank}>{this.props.data.rank}</Text>
+      <Text style={Styles.name}>{this.props.data.name}</Text>
+      <Text style={Styles.location}>{this.props.data.location}</Text>
+      <Text style={Styles.distance}>{this.props.data.distance}</Text>
+      <Text style={Styles.progress}>{this.props.data.progress}</Text>
+      <Text style={Styles.rankView}>{this.props.data.me}</Text>
     </View>
   )}
 }
