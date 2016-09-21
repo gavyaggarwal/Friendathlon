@@ -158,5 +158,36 @@ module.exports = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontFamily: 'alegreyasans_bold',
+  },
+  userCard: {
+    marginTop: 6,
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 6,
+    flex: 1,
+    flexDirection: "row",
+    borderRadius: 5,
+    alignItems: 'center'
+  },
+  rank: {
+    fontFamily: 'opensans_bold',
+    fontSize: 35,
+    marginRight: 5,
+    marginLeft: 5
+  },
+  info: {
+    fontFamily: 'alegreyasans_regular',
+    fontSize: 13,
+  },
+  userInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1,
+    alignItems: 'center'
+  },
+  progress: {
+    height: 10,
+    backgroundColor: '#666',
+    borderRadius: 5
   }
 });
