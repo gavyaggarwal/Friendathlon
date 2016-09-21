@@ -156,7 +156,7 @@ export default class SignUp extends Component {
         </View>
         <View style={Styles.connect}>
           <Text style={Styles.instructions}>
-            Let''s start by finding your friends:
+            Let's start by finding your friends:
           </Text>
           <TouchableHighlight style={[Styles.btn, {backgroundColor:"#3b5998"}]} onPress={this.loginWithFacebook}>
             <View style={Styles.btnView}>
@@ -182,7 +182,7 @@ export default class SignUp extends Component {
         </View>
         <View style={{flex:1, alignItems: 'center',}}>
           <Text style={Styles.instructions}>
-            And you''ll be set to compete with your friends!
+            And you'll be set to compete with your friends!
           </Text>
         </View>
       </View>
