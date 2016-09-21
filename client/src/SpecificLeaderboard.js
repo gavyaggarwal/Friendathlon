@@ -135,7 +135,7 @@ export default class SpecificLeaderboard extends Component {
           ranking = "3rd";
           break;
         default:
-          heading = this.state.stats.friendRank + "th"
+          ranking = this.state.stats.friendRank + "th"
           break;
       }
       var friends = "friends";

@@ -7,3 +7,4 @@ TODO:
   - Handle case when user revokes Facebook permissions and then tries to connect
     to moves
   - Acquire image license
+  - Call update profile on every launch
