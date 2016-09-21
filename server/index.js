@@ -404,6 +404,96 @@ app.get('/debugClear', verifyDB, function (req, res) {
 app.get('/debugRun', verifyDB, function (req, res) {
   var col = req.db.collection('users');
   col.updateOne(
+    { "id": "1" },
+    {
+      $set: {
+        "name": "Sarah Watson",
+        "todayActivities": {
+          "cycling": 0,
+          "running": 0,
+          "walking": 100
+        },
+        "thisWeekActivities": {
+          "cycling": 19000,
+          "running": 1400,
+          "walking": 1000
+        },
+        "thisMonthActivities": {
+          "cycling": 90000,
+          "running": 4200,
+          "walking": 5000
+        },
+        "location": "Newark, DE"
+      },
+      $currentDate: { "lastModified": true }
+    },
+    {
+      upsert: true
+    });
+  col.updateOne(
+    { "id": "2" },
+    {
+      $set: {
+        "name": "Ronald Jones",
+        "todayActivities": {
+          "cycling": 0,
+          "running": 3000,
+          "walking": 420
+        },
+        "thisWeekActivities": {
+          "cycling": 10000,
+          "running": 1000,
+          "walking": 1040
+        },
+        "thisMonthActivities": {
+          "cycling": 13000,
+          "running": 5200,
+          "walking": 2000
+        },
+        "location": "Portland, OR"      },
+      $currentDate: { "lastModified": true }
+    },
+    {
+      upsert: true
+    });
+  col.updateOne(
+    { "id": "3" },
+    {
+      $set: {
+        "name": "Catherine Black",
+        "todayActivities": {
+          "cycling": 5000,
+          "running": 1000,
+          "walking": 900
+        },
+        "thisWeekActivities": {
+          "cycling": 6000,
+          "running": 4200,
+          "walking": 9000
+        },
+        "thisMonthActivities": {
+          "cycling": 7000,
+          "running": 5200,
+          "walking": 10000
+        },
+        "location": "Boston, MA"      },
+      $currentDate: { "lastModified": true }
+    },
+    {
+      upsert: true
+    });
+  col.updateOne(
+    { "id": "1774556589426074" },
+    {
+      $set: {
+        "friends": ["1","2","3","10207412285972057"]
+      },
+      $currentDate: { "lastModified": true }
+    },
+    {
+      upsert: true
+    });
+  col.updateOne(
     { "id": "10207412285972057" },
     {
       $set: {
@@ -414,9 +504,7 @@ app.get('/debugRun', verifyDB, function (req, res) {
     },
     {
       upsert: true
-    }, function(err, results) {
-      res.redirect('friendathlon://');
-  });
+    });
 });
 
 app.get('/pagecount', verifyDB, function (req, res) {

@@ -36,7 +36,7 @@ function startMovesDataScraping() {
     }
   }
 
-  setInterval(task, 2 * ONE_SECOUND);
+  setInterval(task, 2 * ONE_SECOND);
 }
 
 function postNotification(recipient, message) {
