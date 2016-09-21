@@ -58,14 +58,23 @@ export default class SpecificLeaderboard extends Component {
       "week" : "this week",
       "month" : "this month"
     };
-    return headers[verb];
+    return headers[time];
+  }
+
+  headerTime(time) {
+    const headers = {
+      "day" : "Today's",
+      "week" : "This Week's",
+      "month" : "This Month's"
+    };
+    return headers[time];
   }
 
   constructor(props) {
     super(props);
-    var userID = props.userID;
-    var activity = "walking";
-    var period = "week";
+    var userID = props.data.userID;
+    var activity = props.data.activity;
+    var period = props.data.period;
 
     var that = this;
     (async function() {
@@ -120,10 +129,12 @@ export default class SpecificLeaderboard extends Component {
       return (
         <View style={Styles.container}>
           <ScrollView style={localStyles.scrollView}>
-            <Text style={localStyles.heading}>{this.state.title}</Text>
+            <Text style={localStyles.heading}>
+              {this.headerTime(this.props.data.period)} {this.header(this.props.data.activity)} Leaderboard
+            </Text>
             <Text style={localStyles.caption}>
               {heading}You ranked {ranking} out of your {this.state.stats.friendTotal} {friends}{ribbonOnTrack}.
-              Your {this.state.stats.friendTotal} {friends} {this.pastTense(activity)} a total of {Math.round(this.state.stats.totalDistance * 0.000621371)} miles {this.periodMap(period)}.
+              Your {this.state.stats.friendTotal} {friends} {this.pastTense(this.props.data.activity)} a total of {Math.round(this.state.stats.totalDistance * 0.000621371)} miles {this.periodMap(this.props.data.period)}.
               That's an average of {Math.round(this.state.stats.averageDistance * 0.000621371)} miles per person so far.
             </Text>
             { this.state.friends.map(function(user) {
