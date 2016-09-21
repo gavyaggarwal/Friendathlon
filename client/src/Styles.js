@@ -175,9 +175,17 @@ module.exports = StyleSheet.create({
     marginRight: 5,
     marginLeft: 5
   },
+  rankView: {
+    alignItems: 'center',
+    width: 50,
+  },
   info: {
     fontFamily: 'alegreyasans_regular',
     fontSize: 13,
+  },
+  infoView: {
+    flex:1,
+    marginRight: 10,
   },
   userInfo: {
     flexDirection: 'row',
@@ -189,5 +197,10 @@ module.exports = StyleSheet.create({
     height: 10,
     backgroundColor: '#666',
     borderRadius: 5
+  },
+  progressView: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
   }
 });

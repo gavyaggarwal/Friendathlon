@@ -34,15 +34,15 @@ class UserCard extends Component {
 
     return (
     <View style={[Styles.userCard, cardColor]}>
-      <View style={{alignItems: 'center', width: 50,}}>
+      <View style={Styles.rankView}>
         <Text style={[Styles.rank, textColor]}>{this.props.data.rank}</Text>
       </View>
-      <View style={{flex:1, marginRight: 10,}}>
+      <View style={Styles.infoView}>
         <View style={Styles.userInfo}>
           <Text style={[Styles.info, textColor]}>{this.props.data.name} • {this.props.data.location}</Text>
           <Text style={[Styles.info, textColor]}> {Math.round(this.props.data.distance * 0.000621371)} mi </Text>
         </View>
-        <View style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
+        <View style={Styles.progressView}>
           <View style={[Styles.progress, {flex: this.props.data.progress}, progressColor]}/>
           <View style={{flex: (1-this.props.data.progress)}}/>
         </View>
