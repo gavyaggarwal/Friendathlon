@@ -44,6 +44,12 @@ class Friendathlon extends Component {
         });
       }
     })();
+    this.signUpComplete = function(userID) {
+      that.setState({
+        userID: userID,
+        needsLogin: false
+      });
+    }
   }
   navigatorRenderScene(route, navigator) {
     _navigator = navigator;
@@ -58,7 +64,7 @@ class Friendathlon extends Component {
   }
   render() {
     if (this.state.needsLogin) {
-      return (<SignUp />);
+      return (<SignUp signUpComplete={this.signUpComplete} />);
     } else if (this.state.userID == null) {
       return (
         <Text>Loading</Text>
