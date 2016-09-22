@@ -1,3 +1,8 @@
+### Note for implementing Neura
+
+You need to create a login button in the app that will call the Neura.logIn JS function. The JS function should trigger the UI which will prompt the user to login. After the login is completed, there will be a JS callback that will tell you the Neura Access token. Send this to the server using the updateProfile function with the "neuraToken" param. 
+
+
 ## TODO
   - iOS Migration: configure React Native Facebook SDK for iOS
   - Connect with FB prior to Moves

@@ -7,7 +7,8 @@
  *                 "friends": [<FBFRIENDID>,...],
  *                 "name": <FB NAME>,
  *                 "location": <LOCATION STRING (eg. Newark, DE)>,
- *                 "notificationToken": <notificationToken>
+ *                 "notificationToken": <notificationToken>,
+ *                 "neuraToken": <neuraToken>
  *               }
  *
  * /getProfile (GET) - Returns information for a user
@@ -81,6 +82,9 @@ app.post('/updateProfile', verifyDB, function (req, res) {
   }
   if (req.body.notificationToken) {
     newVals.notificationToken = req.body.notificationToken;
+  }
+  if (req.body.neuraToken) {
+    newVals.neuraToken = req.body.neuraToken;
   }
   var col = req.db.collection('users');
   col.updateOne(
