@@ -3,10 +3,13 @@ import {
   AppRegistry,
   AsyncStorage,
   BackAndroid,
+  NativeModules,
   Navigator,
   Text,
   View
 } from 'react-native';
+
+var neura = NativeModules.Neura;
 
 import SignUp from './src/SignUp';
 import GenericLeaderboard from './src/GenericLeaderboard';
@@ -14,6 +17,25 @@ import SpecificLeaderboard from './src/SpecificLeaderboard';
 import Notifications from './src/Notifications';
 
 var navigator;
+
+/*
+neura.logIn(function(neuraID, accessToken) {
+  console.log("We were successfully able to log into neura.");
+  console.log("Neura User ID:", neuraID);
+  console.log("Neura Access Token:", accessToken);
+}, function(error) {
+  console.log("There was an error logging into neura.");
+  console.log("The error is:", error);
+});
+
+neura.logOut(function(success) {
+  if (success) {
+    console.log("Neura was logged out successfully.");
+  } else {
+    console.log("There was an error logging out neura");
+  }
+});
+*/
 
 BackAndroid.addEventListener('hardwareBackPress', function() {
     if (navigator && navigator.getCurrentRoutes().length > 1) {

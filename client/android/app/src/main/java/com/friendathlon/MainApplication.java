@@ -3,6 +3,8 @@ package com.friendathlon;
 import android.app.Application;
 import android.util.Log;
 
+import com.friendathlon.neura.*;
+
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 
 import com.facebook.react.ReactApplication;
@@ -46,7 +48,8 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
               new MainReactPackage(),
               new FBSDKPackage(mCallbackManager),
-              new ReactNativePushNotificationPackage()
+              new ReactNativePushNotificationPackage(),
+              new NeuraPackage()
       );
     }
   };

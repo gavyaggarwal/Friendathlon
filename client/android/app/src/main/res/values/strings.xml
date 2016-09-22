@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Friendathlon</string>
     <string name="facebook_app_id">201073250306669</string>
+    <string name="app_uid">256c65c4b816b03f3e8d0ea090bdf03895ed20c3a252ee436b385757c439093c</string>
+    <string name="app_secret">6eafe10ec859b3dea7c9e7702fa6ddb7e7110f16f9094c71df5087eeceae9c5f</string>
 </resources>
