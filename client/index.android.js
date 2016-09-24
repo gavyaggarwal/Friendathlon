@@ -19,15 +19,23 @@ import Notifications from './src/Notifications';
 var navigator;
 
 /*
-neura.logIn(function(neuraID, accessToken) {
+var events = ["userLeftHome", "userLeftActiveZone", "userArrivedWorkFromHome", "userArrivedHome", "userArrivedHomeFromWork", "userArrivedToWork", "userArrivedAtGroceryStore", "userArrivedAtSchoolCampus", "userArrivedAtAirport", "userArrivedAtHospital", "userLeftAirport", "userArrivedAtClinic", "userArrivedAtRestaurant", "userLeftCafe", "userLeftHospital", "userArrivedAtCafe", "userLeftRestaurant", "userLeftSchoolCampus", "userArrivedAtPharmacy", "userLeftGym", "userArrivedAtActiveZone", "userArrivedToGym", "userLeftWork", "userStartedRunning", "userWokeUp", "userIsIdle", "userIsOnTheWayToActiveZone"];
+neura.logIn(events, function(neuraID, accessToken) {
   console.log("We were successfully able to log into neura.");
   console.log("Neura User ID:", neuraID);
   console.log("Neura Access Token:", accessToken);
+  // TODO: Notify server of this user id with GET /updateProfile
+  for (var i = 0; i < events.length; i++) {
+    var event = events[i];
+    neura.subscribe(event);
+  }
 }, function(error) {
   console.log("There was an error logging into neura.");
   console.log("The error is:", error);
 });
+*/
 
+/*
 neura.logOut(function(success) {
   if (success) {
     console.log("Neura was logged out successfully.");

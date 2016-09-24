@@ -1,5 +1,6 @@
 package com.friendathlon.neura;
 
+import android.os.Bundle;
 import android.os.Message;
 
 import com.facebook.react.bridge.Callback;
@@ -8,6 +9,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 
 import com.neura.resources.authentication.AuthenticateCallback;
 import com.neura.resources.authentication.AuthenticateData;
@@ -29,6 +31,7 @@ public class NeuraModule extends ReactContextBaseJavaModule {
 
   private Callback success;
   private Callback error;
+  private Callback logOutCallback;
 
   //private static final String DURATION_SHORT_KEY = "SHORT";
   //private static final String DURATION_LONG_KEY = "LONG";
@@ -51,7 +54,7 @@ public class NeuraModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void logIn(Callback successCallback, Callback errorCallback) {
+  public void logIn(ReadableArray perms, Callback successCallback, Callback errorCallback) {
     Builder builder = new Builder(getReactApplicationContext());
     mNeuraApiClient = builder.build();
     mNeuraApiClient.setAppUid("256c65c4b816b03f3e8d0ea090bdf03895ed20c3a252ee436b385757c439093c");
@@ -61,7 +64,13 @@ public class NeuraModule extends ReactContextBaseJavaModule {
     success = successCallback;
     error = errorCallback;
 
-    mPermissions = Permission.list(new String[]{"userLeftHome", "userLeftWork", "userStartedRunning", "userWokeUp", "userIsIdle", "userIsOnTheWayToActiveZone"});
+    String[] permsArr = new String[perms.size()];
+
+    for (int i = 0; i < perms.size(); i++) {
+      permsArr[i] = perms.getString(i);
+    }
+
+    mPermissions = Permission.list(permsArr);
 
     AuthenticationRequest request = new AuthenticationRequest(mPermissions);
 
@@ -79,6 +88,17 @@ public class NeuraModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void subscribe(String eventName) {
+    Builder builder = new Builder(getReactApplicationContext());
+    mNeuraApiClient = builder.build();
+    mNeuraApiClient.setAppUid("256c65c4b816b03f3e8d0ea090bdf03895ed20c3a252ee436b385757c439093c");
+    mNeuraApiClient.setAppSecret("6eafe10ec859b3dea7c9e7702fa6ddb7e7110f16f9094c71df5087eeceae9c5f");
+    mNeuraApiClient.connect();
+
+    mNeuraApiClient.subscribeToEvent(eventName, eventName, false, null);
+  }
+
+  @ReactMethod
   public void logOut(Callback callback) {
     Builder builder = new Builder(getReactApplicationContext());
     mNeuraApiClient = builder.build();
@@ -86,11 +106,12 @@ public class NeuraModule extends ReactContextBaseJavaModule {
     mNeuraApiClient.setAppSecret("6eafe10ec859b3dea7c9e7702fa6ddb7e7110f16f9094c71df5087eeceae9c5f");
     mNeuraApiClient.connect();
 
-    success = callback;
-    mNeuraApiClient.forgetMe(getCurrentActivity(), true, new android.os.Handler.Callback() {
+    logOutCallback = callback;
+
+    mNeuraApiClient.forgetMe(null, false, new android.os.Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            success.invoke(msg.toString());
+            logOutCallback.invoke(true);
             return true;
         }
     });
