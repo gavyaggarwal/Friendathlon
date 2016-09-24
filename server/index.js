@@ -8,7 +8,7 @@
  *                 "name": <FB NAME>,
  *                 "location": <LOCATION STRING (eg. Newark, DE)>,
  *                 "notificationToken": <notificationToken>,
- *                 "neuraToken": <neuraToken>
+ *                 "neuraID": <neuraID>
  *               }
  *
  * /getProfile (GET) - Returns information for a user
@@ -21,17 +21,18 @@
  * Request Parameters: id=<FBID>&activity=<activity>&time=<day/week/month>
  */
 
-var express    = require('express'),
-    bodyParser = require('body-parser'),
-    fs         = require('fs'),
-    assert     = require('assert'),
-    app        = express(),
-    eps        = require('ejs'),
-    morgan     = require('morgan'),
-    db         = require('./db.js'),
-    config     = require('./config.js'),
-    cron       = require('./cron.js'),
-    logic      = require('./logic.js');
+var express       = require('express'),
+    bodyParser    = require('body-parser'),
+    fs            = require('fs'),
+    assert        = require('assert'),
+    app           = express(),
+    eps           = require('ejs'),
+    morgan        = require('morgan'),
+    db            = require('./db.js'),
+    config        = require('./config.js'),
+    cron          = require('./cron.js'),
+    logic         = require('./logic.js'),
+    notifications = require('./notifications.js');
 
 
 Object.assign=require('object-assign');
@@ -41,7 +42,7 @@ app.use(morgan('combined'))
 app.use(bodyParser.json());
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '192.168.1.166';
 
 
 
@@ -83,8 +84,8 @@ app.post('/updateProfile', verifyDB, function (req, res) {
   if (req.body.notificationToken) {
     newVals.notificationToken = req.body.notificationToken;
   }
-  if (req.body.neuraToken) {
-    newVals.neuraToken = req.body.neuraToken;
+  if (req.body.neuraID) {
+    newVals.neuraID = req.body.neuraID;
   }
   var col = req.db.collection('users');
   col.updateOne(
@@ -513,6 +514,27 @@ app.get('/debugRun', verifyDB, function (req, res) {
 
 app.get('/pagecount', verifyDB, function (req, res) {
   sendObject(res, {});
+});
+
+app.post('/neura', verifyDB, function (req, res) {
+  var neuraID = req.body.userId;
+
+  var col = req.db.collection('users');
+  col.findOne({
+    neuraID: neuraID
+  }, function(err, item) {
+    sendObject(res, {});
+    if(err || item == null) {
+      // Error or invalid neura id
+    } else {
+      var handler = notifications.handlers[req.body.event.name];
+      if (handler) {
+        handler(item);
+      } else {
+        console.log("No notification handler for event", req.body.event.name)
+      }
+    }
+  });
 });
 
 // error handling
