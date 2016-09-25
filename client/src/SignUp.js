@@ -20,10 +20,10 @@ const {
 
 import Styles from './Styles';
 
-//import FBIcon from 'react-native-vector-icons/FontAwesome';
-//import { createIconSet } from 'react-native-vector-icons';
-//const glyphMap = { 'moves': "@", };
-//const MovesIcon = createIconSet(glyphMap, 'icomoon', './../android/app/src/main/assets/fonts/moves.ttf');
+// import FBIcon from 'react-native-vector-icons/FontAwesome';
+// import { createIconSet } from 'react-native-vector-icons';
+// const glyphMap = { 'moves': "@", };
+// const MovesIcon = createIconSet(glyphMap, 'icomoon', './../android/app/src/main/assets/fonts/moves.ttf');
 // const AnimatedIcon = Animated.createAnimatedComponent(Icon)
 
 var token = '';
@@ -129,14 +129,6 @@ export default class SignUp extends Component {
           else {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));
           }
-          var timer = setInterval(async function() {
-            let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
-            let responseJson = await response.json();
-            if (responseJson.validUser) {
-              clearInterval(timer);
-              that.finishCallback(FBID);
-            }
-          }, 5000);
         }).catch(err => console.error('An error occurred', err));;
       } else {
         Alert.alert(
@@ -152,6 +144,70 @@ export default class SignUp extends Component {
     }
   }
 
+  async connectWithNeura() {
+    var that = this;
+    try {
+      var FBID = await AsyncStorage.getItem('FBID');
+      if (FBID !== null) {
+        let response = await fetch('http://www.friendathlon.com/getProfile?id=' + userID);
+        let responseJson = await response.json();
+        if (responseJson.movesConnected) {
+          var events = ["userLeftHome", "userLeftActiveZone", "userArrivedWorkFromHome", "userArrivedHome", "userArrivedHomeFromWork", "userArrivedToWork", "userArrivedAtGroceryStore", "userArrivedAtSchoolCampus", "userArrivedAtAirport", "userArrivedAtHospital", "userLeftAirport", "userArrivedAtClinic", "userArrivedAtRestaurant", "userLeftCafe", "userLeftHospital", "userArrivedAtCafe", "userLeftRestaurant", "userLeftSchoolCampus", "userArrivedAtPharmacy", "userLeftGym", "userArrivedAtActiveZone", "userArrivedToGym", "userLeftWork", "userStartedRunning", "userWokeUp", "userIsIdle", "userIsOnTheWayToActiveZone"];
+          neura.logIn(events, function(neuraID, accessToken) {
+            console.log("We were successfully able to log into neura.");
+            console.log("Neura User ID:", neuraID);
+            console.log("Neura Access Token:", accessToken);
+
+            fetch('http://www.friendathlon.com/updateProfile', {
+              method: 'POST',
+              body: JSON.stringify({
+                "id" : FBID,
+                "neuraID" : neuraID
+              }),
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              }
+            })
+            .then((response) => response.json())
+            .catch((error) => { console.log(error) });
+
+            // TODO: Notify server of this user id with GET /updateProfile
+            for (var i = 0; i < events.length; i++) {
+              var event = events[i];
+              neura.subscribe(event);
+            }
+          }, function(error) {
+            console.log("There was an error logging into neura.");
+            console.log("The error is:", error);
+          });
+
+          var timer = setInterval(async function() {
+            let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
+            let responseJson = await response.json();
+            if (responseJson.validUser) {
+              clearInterval(timer);
+              that.finishCallback(FBID);
+            }
+          }, 5000);
+          });
+        } else {
+
+        }
+      } else {
+        Alert.alert(
+          'Warning',
+          'Please login to Facebook and Moves before connecting to Neura.',
+          [
+            {text: 'OK'},
+          ]
+        )
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
   render() {
     return (
       <View style={Styles.container}>
@@ -178,7 +234,7 @@ export default class SignUp extends Component {
           <Text style={Styles.instructions}>
             And getting your Moves:
           </Text>
-          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00d45a"}]} finishCallback={this.props.signUpComplete} onPress={this.connectWithMoves}>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00d45a"}]} onPress={this.connectWithMoves}>
             <View style={Styles.btnView}>
               <Image source = {require('./../img/moves.png')} style={Styles.btnIcon}/>
               <Text style={Styles.btnText}>
@@ -187,7 +243,23 @@ export default class SignUp extends Component {
             </View>
           </TouchableHighlight>
         </View>
-        <View style={{flex:1, alignItems: 'center',}}>
+        <View style={Styles.connect}>
+          <Text style={Styles.instructions}>
+            And if you'd like, we'll send you timed notifications:
+          </Text>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00ccff"}]} finishCallback={this.props.signUpComplete} onPress={this.connectWithNeura}>
+            <View style={Styles.btnView}>
+              <Image source = {require('./../img/neura.png')} style={Styles.btnIcon}/>
+              <Text style={Styles.btnText}>
+                Connect with Neura
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <Text style={Styles.hyperlink} onPress={this.props.signUpComplete}>
+            No thanks. I'll settle for untimed notifications.
+          </Text>
+        </View>
+        <View style={{flex:1, alignItems: 'center', marginTop:20}}>
           <Text style={Styles.instructions}>
             And you'll be set to compete with your friends!
           </Text>

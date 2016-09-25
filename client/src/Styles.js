@@ -24,7 +24,7 @@ module.exports = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 15,
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'alegreyasans_light',
   },
   connect: {
@@ -136,13 +136,13 @@ module.exports = StyleSheet.create({
     borderColor: '#00cdec'
   },
   btn: {
-    width: 250,
-    height: 60,
+    width: 230,
+    height: 50,
     borderRadius: 40,
   },
   btnView: {
-    width: 250,
-    height: 60,
+    width: 230,
+    height: 50,
     flexDirection:'row',
     alignItems: 'center',
     justifyContent: 'center'
@@ -204,5 +204,14 @@ module.exports = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginTop: -5
+  },
+  hyperlink: {
+    textDecorationLine: 'underline',
+    color: '#8a8a8a',
+    textAlign: 'center',
+    marginBottom: 15,
+    marginTop:5,
+    fontSize: 15,
+    fontFamily: 'alegreyasans_light',
   }
 });

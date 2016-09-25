@@ -110,7 +110,8 @@ app.get('/getProfile', verifyDB, function (req, res) {
     walkingRecord: 0,
     runningRecord: 0,
     cyclingRecord: 0,
-    validUser: true
+    validUser: true,
+    movesConnected: true
   };
 
   var col = db.getInstance().collection('users');
@@ -122,10 +123,14 @@ app.get('/getProfile', verifyDB, function (req, res) {
     } else if (!item || !item.accessToken) {
       result.validUser = false;
       sendObject(res, result);
+    } else if (item.neuraID == null) {
+      result.validUser = false;
+      sendObject(res, result);
     } else {
       logic.refreshMovesData(item, function() {
         sendObject(res, result);
       }, function() {
+        result.movesConnected = false;
         result.validUser = false;
         sendObject(res, result);
       });
