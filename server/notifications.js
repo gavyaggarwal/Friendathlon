@@ -11,8 +11,20 @@ const ONE_HOUR = 60 * ONE_MINUTE;
 const ONE_DAY = 24 * ONE_HOUR;
 
 var handlers = {
+  userWokeUp: function(item) {
+    sendNotificationIfReady(item.id, "Good morning sunshine! Start the day at the top of your leaderboard with a quick jog.");
+  },
+  userIsIdleFor2Hours: function(item) {
+    console.log(item);
+    sendNotificationIfReady(item.id, "A short walk could give you a boost in the leaderboards.");
+  },
   userArrivedHome: function(item) {
-    console.log("userArrivedHome Notification Would Be Sent Here");
+    if (item.todayActivities && item.todayActivities.walking < 1000) {
+      sendNotificationIfReady(item.id, "Welcome home! Time for a walk?");
+    }
+  },
+  userArrivedToWorkByRunning: function(item) {
+    sendNotificationIfReady(item.id, "Way to start the day right. Great job on your run!");
   }
 };
 
