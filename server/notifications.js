@@ -20,7 +20,7 @@ var handlers = {
   },
   userArrivedHome: function(item) {
     if (item.todayActivities && item.todayActivities.walking < 1000) {
-      sendNotificationIfReady(item.id, "Welcome home! Time for a walk?");
+      sendNotificationIfReady(item.id, "Welcome home! Time to get moving?");
     }
   },
   userArrivedToWorkByRunning: function(item) {

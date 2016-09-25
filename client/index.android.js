@@ -19,7 +19,7 @@ import Notifications from './src/Notifications';
 var navigator;
 
 /*
-var events = ["userLeftHome", "userLeftActiveZone", "userArrivedWorkFromHome", "userArrivedHome", "userArrivedHomeFromWork", "userArrivedToWork", "userArrivedAtGroceryStore", "userArrivedAtSchoolCampus", "userArrivedAtAirport", "userArrivedAtHospital", "userLeftAirport", "userArrivedAtClinic", "userArrivedAtRestaurant", "userLeftCafe", "userLeftHospital", "userArrivedAtCafe", "userLeftRestaurant", "userLeftSchoolCampus", "userArrivedAtPharmacy", "userLeftGym", "userArrivedAtActiveZone", "userArrivedToGym", "userLeftWork", "userStartedRunning", "userWokeUp", "userIsIdle", "userIsOnTheWayToActiveZone"];
+var events = ["userWokeUp", "userIsIdle", "userArrivedHome", "userStartedRunning"];
 neura.logIn(events, function(neuraID, accessToken) {
   console.log("We were successfully able to log into neura.");
   console.log("Neura User ID:", neuraID);
