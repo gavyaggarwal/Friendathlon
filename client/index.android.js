@@ -86,7 +86,6 @@ class Friendathlon extends Component {
       }
     })();
     this.signUpComplete = function(userID) {
-      console.log(userID)
       that.setState({
         userID: userID,
         needsLogin: false

@@ -31,98 +31,111 @@ var neura = NativeModules.Neura;
 var token = '';
 
 export default class SignUp extends Component {
+  checkCompletion() {
+    if (this.state.facebookDone && this.state.movesDone && this.state.neuraDone) {
+      this.props.signUpComplete(this.state.userID);
+    }
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
-      userID: null
-    }
-  }
+      userID: null,
+      facebookDone: false,
+      movesDone: false,
+      neuraDone: false
+    };
 
-  loginWithFacebook() {
-    LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'user_location']).then(
-      function(result) {
-        if (result.isCancelled) {
-          console.log('Login cancelled');
-        } else {
-
-          AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    token = data.accessToken.toString()
-
-                    const responseCallback = ((error, result) => {
-                              if (error) {
-                                console.log('error')
-                              }
-                              else {
-                                try {
-                                  AsyncStorage.setItem("FBID", (result.id).toString());
-                                }
-                                catch (error) {
-                                  console.log(error)
-                                }
-
-                                var friends = [];
-                                for (var i = 0; i < result.friends.data.length; i++) {
-                                  friends.push((result.friends.data[i].id).toString())
-                                };
-
-                                fetch('http://www.friendathlon.com/updateProfile', {
-                                  method: 'POST',
-                                  body: JSON.stringify({
-                                    "id" : result.id,
-                                    "friends" : friends,
-                                    "name" : result.name,
-                                    "location" : result.location.name
-                                  }),
-                                  headers: {
-                                    'Accept': 'application/json',
-                                    'Content-Type': 'application/json',
-                                  }
-                                })
-                                .then((response) => response.json())
-                                .catch((error) => { console.log(error) });
-                              }
-                    })
-
-                    // the famous params object...
-                    const profileRequestParams = {
-                                fields: {
-                                    string: 'id, name, friends, location'
-                                }
-                    }
-
-                    const profileRequestConfig = {
-                                httpMethod: 'GET',
-                                version: 'v2.5',
-                                parameters: profileRequestParams,
-                                accessToken: token
-                    }
-
-                    const profileRequest = new GraphRequest(
-                                '/me',
-                                profileRequestConfig,
-                                responseCallback,
-                    )
-
-                    // Start the graph request.
-                    new GraphRequestManager().addRequest(profileRequest).start();
-                  }
-                )
-        }
-      },
-      function(error) {
-        console.log('Login fail with error: ' + error);
-      }
-    );
-  }
-
-  async connectWithMoves() {
     var that = this;
-    try {
-      var FBID = await AsyncStorage.getItem('FBID');
-      if (FBID !== null) {
-        const url = 'moves://app/authorize?client_id=w13CA903PnotFEqh8qGVhFAS_nRoSM22&redirect_uri=http://www.friendathlon.com/auth&scope=activity&state=' + FBID;
+
+    this.loginWithFacebook = function() {
+      LoginManager.logInWithReadPermissions(['public_profile', 'user_friends', 'user_location']).then(
+        function(result) {
+          if (result.isCancelled) {
+            console.log('Login cancelled');
+          } else {
+            AccessToken.getCurrentAccessToken().then(
+                    (data) => {
+                      token = data.accessToken.toString()
+
+                      const responseCallback = ((error, result) => {
+                                if (error) {
+                                  console.log('error')
+                                }
+                                else {
+                                  try {
+                                    AsyncStorage.setItem("FBID", (result.id).toString());
+                                  }
+                                  catch (error) {
+                                    console.log(error)
+                                  }
+
+                                  var friends = [];
+                                  for (var i = 0; i < result.friends.data.length; i++) {
+                                    friends.push((result.friends.data[i].id).toString())
+                                  };
+
+
+                                  fetch('http://www.friendathlon.com/updateProfile', {
+                                    method: 'POST',
+                                    body: JSON.stringify({
+                                      "id" : result.id,
+                                      "friends" : friends,
+                                      "name" : result.name,
+                                      "location" : result.location.name
+                                    }),
+                                    headers: {
+                                      'Accept': 'application/json',
+                                      'Content-Type': 'application/json',
+                                    }
+                                  })
+                                  .then((response) => {
+                                    that.setState({
+                                      userID: result.id,
+                                      facebookDone: true
+                                    });
+                                    that.checkCompletion();
+                                  })
+                                  .catch((error) => { console.log(error) });
+                                }
+                      })
+
+                      // the famous params object...
+                      const profileRequestParams = {
+                                  fields: {
+                                      string: 'id, name, friends, location'
+                                  }
+                      }
+
+                      const profileRequestConfig = {
+                                  httpMethod: 'GET',
+                                  version: 'v2.5',
+                                  parameters: profileRequestParams,
+                                  accessToken: token
+                      }
+
+                      const profileRequest = new GraphRequest(
+                                  '/me',
+                                  profileRequestConfig,
+                                  responseCallback,
+                      )
+
+                      // Start the graph request.
+                      new GraphRequestManager().addRequest(profileRequest).start();
+                    }
+                  )
+          }
+        },
+        function(error) {
+          console.log('Login fail with error: ' + error);
+        }
+      );
+    };
+
+    this.connectWithMoves = function() {
+      if (that.state.facebookDone) {
+        const url = 'moves://app/authorize?client_id=w13CA903PnotFEqh8qGVhFAS_nRoSM22&redirect_uri=http://www.friendathlon.com/auth&scope=activity&state=' + that.state.userID;
         Linking.canOpenURL(url).then(supported => {
           if (!supported) {
             console.log('Can\'t handle url: ' + url);
@@ -130,6 +143,7 @@ export default class SignUp extends Component {
           }
           else {
             Linking.openURL(url).catch(err => console.error('An error occurred', err));
+            that.waitForMoves();
           }
         }).catch(err => console.error('An error occurred', err));;
       } else {
@@ -141,96 +155,73 @@ export default class SignUp extends Component {
           ]
         )
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+    };
 
-  async connectWithNeura(accepted) {
-    var that = this;
-    try {
-      var FBID = await AsyncStorage.getItem('FBID');
-      if (FBID !== null) {
-        let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
+    this.waitForMoves = function() {
+      var timer = setInterval(async function() {
+        let response = await fetch('http://www.friendathlon.com/getProfile?id=' + that.state.userID);
         let responseJson = await response.json();
-        if (responseJson.movesConnected) {
-          if(accepted) {
-            var events = ["userLeftHome", "userLeftActiveZone", "userArrivedWorkFromHome", "userArrivedHome", "userArrivedHomeFromWork", "userArrivedToWork", "userArrivedAtGroceryStore", "userArrivedAtSchoolCampus", "userArrivedAtAirport", "userArrivedAtHospital", "userLeftAirport", "userArrivedAtClinic", "userArrivedAtRestaurant", "userLeftCafe", "userLeftHospital", "userArrivedAtCafe", "userLeftRestaurant", "userLeftSchoolCampus", "userArrivedAtPharmacy", "userLeftGym", "userArrivedAtActiveZone", "userArrivedToGym", "userLeftWork", "userStartedRunning", "userWokeUp", "userIsIdle", "userIsOnTheWayToActiveZone"];
-            neura.logIn(events, function(neuraID, accessToken) {
-              console.log("We were successfully able to log into neura.");
-              console.log("Neura User ID:", neuraID);
-              console.log("Neura Access Token:", accessToken);
+        if (responseJson.validUser) {
+          clearInterval(timer);
+          that.setState({
+            movesDone: true
+          });
+          that.checkCompletion();
+        }
+      }, 1500);
+    };
 
-              fetch('http://www.friendathlon.com/updateProfile', {
-                method: 'POST',
-                body: JSON.stringify({
-                  "id" : FBID,
-                  "neuraID" : neuraID
-                }),
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                }
-              })
-              .then((response) => response.json())
-              .catch((error) => { console.log(error) });
+    this.connectWithNeura = function() {
+      if (that.state.facebookDone) {
+        var events = ["userWokeUp", "userIsIdle", "userArrivedHome", "userStartedRunning"];
+        neura.logIn(events, function(neuraID, accessToken) {
+          console.log("We were successfully able to log into neura.");
+          console.log("Neura User ID:", neuraID);
+          console.log("Neura Access Token:", accessToken);
 
-              // TODO: Notify server of this user id with GET /updateProfile
-              for (var i = 0; i < events.length; i++) {
-                var event = events[i];
-                neura.subscribe(event);
-              }
-            }, function(error) {
-              console.log("There was an error logging into neura.");
-              console.log("The error is:", error);
-            });
-          } else {
-            fetch('http://www.friendathlon.com/updateProfile', {
-              method: 'POST',
-              body: JSON.stringify({
-                "id" : FBID,
-                "neuraID" : ""
-              }),
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-              }
-            })
-            .then((response) => response.json())
-            .catch((error) => { console.log(error) });
+          fetch('http://www.friendathlon.com/updateProfile', {
+            method: 'POST',
+            body: JSON.stringify({
+              "id" : that.state.userID,
+              "neuraID" : neuraID
+            }),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            }
+          });
+
+          for (var i = 0; i < events.length; i++) {
+            var event = events[i];
+            neura.subscribe(event);
           }
 
-          var timer = setInterval(async function() {
-            let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
-            let responseJson = await response.json();
-            console.log(FBID);
-            if (responseJson.validUser) {
-              clearInterval(timer);
-              that.props.signUpComplete(FBID);
-            }
-          }, 1000); // Lag was too long on this delay so much so that it was detrimental. What's the min it can be?
-        } else {
-          Alert.alert(
-            'Warning',
-            'Please login to Moves before connecting to Neura.',
-            [
-              {text: 'OK'},
-            ]
-          )
-        }
+          that.setState({
+            neuraDone: true
+          });
+          that.checkCompletion();
+
+        }, function(error) {
+          console.log("There was an error logging into neura.");
+          console.log("The error is:", error);
+        });
       } else {
         Alert.alert(
           'Warning',
-          'Please login to Facebook and Moves before connecting to Neura.',
+          'Please login to Facebook before connecting to Neura.',
           [
             {text: 'OK'},
           ]
-        )
+        );
       }
-    } catch (error) {
-      alert(error);
-    }
+    };
 
+    this.skipNeura = function() {
+      that.setState({
+        neuraDone: true
+      });
+      that.checkCompletion();
+    };
   }
 
   render() {
@@ -270,9 +261,9 @@ export default class SignUp extends Component {
         </View>
         <View style={Styles.connect}>
           <Text style={Styles.instructions}>
-            And if you'd like, we'll send you timed notifications:
+            And if you'd like, we'll send you contextual notifications:
           </Text>
-          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00ccff"}]} finishCallback={this.props.signUpComplete} onPress={()=>this.connectWithNeura(true)}>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00ccff"}]} finishCallback={this.props.signUpComplete} onPress={this.connectWithNeura}>
             <View style={Styles.btnView}>
               <Image source = {require('./../img/neura.png')} style={Styles.btnIcon}/>
               <Text style={Styles.btnText}>
@@ -280,8 +271,8 @@ export default class SignUp extends Component {
               </Text>
             </View>
           </TouchableHighlight>
-          <Text style={Styles.hyperlink} finishCallback={this.props.signUpComplete} onPress={()=>this.connectWithNeura(false)}>
-            No thanks. I'll settle for untimed notifications.
+          <Text style={Styles.hyperlink} finishCallback={this.props.signUpComplete} onPress={this.skipNeura}>
+            No thanks. I'll settle for regular notifications.
           </Text>
         </View>
         <View style={{flex:1, alignItems: 'center', marginTop:20}}>
