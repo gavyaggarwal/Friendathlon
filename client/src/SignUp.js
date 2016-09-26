@@ -7,7 +7,8 @@ import {
   Animated,
   Alert,
   AsyncStorage,
-  Linking
+  Linking,
+  NativeModules
 } from 'react-native';
 
 const FBSDK = require('react-native-fbsdk');
@@ -19,6 +20,7 @@ const {
 } = FBSDK;
 
 import Styles from './Styles';
+var neura = NativeModules.Neura;
 
 // import FBIcon from 'react-native-vector-icons/FontAwesome';
 // import { createIconSet } from 'react-native-vector-icons';
@@ -144,25 +146,50 @@ export default class SignUp extends Component {
     }
   }
 
-  async connectWithNeura() {
+  async connectWithNeura(accepted) {
     var that = this;
     try {
       var FBID = await AsyncStorage.getItem('FBID');
       if (FBID !== null) {
-        let response = await fetch('http://www.friendathlon.com/getProfile?id=' + userID);
+        let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
         let responseJson = await response.json();
         if (responseJson.movesConnected) {
-          var events = ["userLeftHome", "userLeftActiveZone", "userArrivedWorkFromHome", "userArrivedHome", "userArrivedHomeFromWork", "userArrivedToWork", "userArrivedAtGroceryStore", "userArrivedAtSchoolCampus", "userArrivedAtAirport", "userArrivedAtHospital", "userLeftAirport", "userArrivedAtClinic", "userArrivedAtRestaurant", "userLeftCafe", "userLeftHospital", "userArrivedAtCafe", "userLeftRestaurant", "userLeftSchoolCampus", "userArrivedAtPharmacy", "userLeftGym", "userArrivedAtActiveZone", "userArrivedToGym", "userLeftWork", "userStartedRunning", "userWokeUp", "userIsIdle", "userIsOnTheWayToActiveZone"];
-          neura.logIn(events, function(neuraID, accessToken) {
-            console.log("We were successfully able to log into neura.");
-            console.log("Neura User ID:", neuraID);
-            console.log("Neura Access Token:", accessToken);
+          if(accepted) {
+            var events = ["userLeftHome", "userLeftActiveZone", "userArrivedWorkFromHome", "userArrivedHome", "userArrivedHomeFromWork", "userArrivedToWork", "userArrivedAtGroceryStore", "userArrivedAtSchoolCampus", "userArrivedAtAirport", "userArrivedAtHospital", "userLeftAirport", "userArrivedAtClinic", "userArrivedAtRestaurant", "userLeftCafe", "userLeftHospital", "userArrivedAtCafe", "userLeftRestaurant", "userLeftSchoolCampus", "userArrivedAtPharmacy", "userLeftGym", "userArrivedAtActiveZone", "userArrivedToGym", "userLeftWork", "userStartedRunning", "userWokeUp", "userIsIdle", "userIsOnTheWayToActiveZone"];
+            neura.logIn(events, function(neuraID, accessToken) {
+              console.log("We were successfully able to log into neura.");
+              console.log("Neura User ID:", neuraID);
+              console.log("Neura Access Token:", accessToken);
 
+              fetch('http://www.friendathlon.com/updateProfile', {
+                method: 'POST',
+                body: JSON.stringify({
+                  "id" : FBID,
+                  "neuraID" : neuraID
+                }),
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                }
+              })
+              .then((response) => response.json())
+              .catch((error) => { console.log(error) });
+
+              // TODO: Notify server of this user id with GET /updateProfile
+              for (var i = 0; i < events.length; i++) {
+                var event = events[i];
+                neura.subscribe(event);
+              }
+            }, function(error) {
+              console.log("There was an error logging into neura.");
+              console.log("The error is:", error);
+            });
+          } else {
             fetch('http://www.friendathlon.com/updateProfile', {
               method: 'POST',
               body: JSON.stringify({
                 "id" : FBID,
-                "neuraID" : neuraID
+                "neuraID" : ""
               }),
               headers: {
                 'Accept': 'application/json',
@@ -171,28 +198,24 @@ export default class SignUp extends Component {
             })
             .then((response) => response.json())
             .catch((error) => { console.log(error) });
-
-            // TODO: Notify server of this user id with GET /updateProfile
-            for (var i = 0; i < events.length; i++) {
-              var event = events[i];
-              neura.subscribe(event);
-            }
-          }, function(error) {
-            console.log("There was an error logging into neura.");
-            console.log("The error is:", error);
-          });
-
+          }
           var timer = setInterval(async function() {
             let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
             let responseJson = await response.json();
             if (responseJson.validUser) {
               clearInterval(timer);
-              that.finishCallback(FBID);
+              console.log('right before the call');
+              that.props.signUpComplete; // This is where I'm trying to change the state of the app, no variations of this work
             }
           }, 5000);
-          });
         } else {
-
+          Alert.alert(
+            'Warning',
+            'Please login to Moves before connecting to Neura.',
+            [
+              {text: 'OK'},
+            ]
+          )
         }
       } else {
         Alert.alert(
@@ -204,10 +227,11 @@ export default class SignUp extends Component {
         )
       }
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
 
   }
+
   render() {
     return (
       <View style={Styles.container}>
@@ -247,7 +271,7 @@ export default class SignUp extends Component {
           <Text style={Styles.instructions}>
             And if you'd like, we'll send you timed notifications:
           </Text>
-          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00ccff"}]} finishCallback={this.props.signUpComplete} onPress={this.connectWithNeura}>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00ccff"}]} finishCallback={this.props.signUpComplete} onPress={()=>this.connectWithNeura(true)}>
             <View style={Styles.btnView}>
               <Image source = {require('./../img/neura.png')} style={Styles.btnIcon}/>
               <Text style={Styles.btnText}>
@@ -255,7 +279,7 @@ export default class SignUp extends Component {
               </Text>
             </View>
           </TouchableHighlight>
-          <Text style={Styles.hyperlink} onPress={this.props.signUpComplete}>
+          <Text style={Styles.hyperlink} finishCallback={this.props.signUpComplete} onPress={()=>this.connectWithNeura(false)}>
             No thanks. I'll settle for untimed notifications.
           </Text>
         </View>
