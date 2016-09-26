@@ -199,15 +199,16 @@ export default class SignUp extends Component {
             .then((response) => response.json())
             .catch((error) => { console.log(error) });
           }
+
           var timer = setInterval(async function() {
             let response = await fetch('http://www.friendathlon.com/getProfile?id=' + FBID);
             let responseJson = await response.json();
+            console.log(FBID);
             if (responseJson.validUser) {
               clearInterval(timer);
-              console.log('right before the call');
-              that.props.signUpComplete; // This is where I'm trying to change the state of the app, no variations of this work
+              that.props.signUpComplete(FBID);
             }
-          }, 5000);
+          }, 1000); // Lag was too long on this delay so much so that it was detrimental. What's the min it can be?
         } else {
           Alert.alert(
             'Warning',
