@@ -248,6 +248,19 @@ export default class SignUp extends Component {
         </View>
         <View style={Styles.connect}>
           <Text style={Styles.instructions}>
+            And if you'd like, enable contextual notifications:
+          </Text>
+          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00ccff"}]} onPress={this.connectWithNeura}>
+            <View style={Styles.btnView}>
+              <Image source = {require('./../img/neura.png')} style={Styles.btnIcon}/>
+              <Text style={Styles.btnText}>
+                Connect with Neura
+              </Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        <View style={Styles.connect}>
+          <Text style={Styles.instructions}>
             And getting your Moves:
           </Text>
           <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00d45a"}]} onPress={this.connectWithMoves}>
@@ -258,22 +271,6 @@ export default class SignUp extends Component {
               </Text>
             </View>
           </TouchableHighlight>
-        </View>
-        <View style={Styles.connect}>
-          <Text style={Styles.instructions}>
-            And if you'd like, we'll send you contextual notifications:
-          </Text>
-          <TouchableHighlight style={[Styles.btn, {backgroundColor:"#00ccff"}]} finishCallback={this.props.signUpComplete} onPress={this.connectWithNeura}>
-            <View style={Styles.btnView}>
-              <Image source = {require('./../img/neura.png')} style={Styles.btnIcon}/>
-              <Text style={Styles.btnText}>
-                Connect with Neura
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <Text style={Styles.hyperlink} finishCallback={this.props.signUpComplete} onPress={this.skipNeura}>
-            No thanks. I'll settle for regular notifications.
-          </Text>
         </View>
         <View style={{flex:1, alignItems: 'center', marginTop:20}}>
           <Text style={Styles.instructions}>
