@@ -97,28 +97,32 @@ function generateCompetitionNotifications() {
         { $group: { _id : "$my_info", friends: { $push: { friendData: "$friendData" } } } }
       ]).each(function(err, item) {
         if (item != null) {
-          var me = item._id;
-          var friend = item.friends[Math.floor(Math.random() * (item.friends.length))].friendData[0];
-          var periods = ["day", "week", "month"];
-          var activities = ["walking", "running", "cycling"];
-          var firstName = friend.name.substr(0, friend.name.indexOf(' '));
+          try {
+            var me = item._id;
+            var friend = item.friends[Math.floor(Math.random() * (item.friends.length))].friendData[0];
+            var periods = ["day", "week", "month"];
+            var activities = ["walking", "running", "cycling"];
+            var firstName = friend.name.substr(0, friend.name.indexOf(' '));
 
-          for (var i = 0; i < periods.length; i++) {
-            var period = periods[i];
-            for (var j = 0; j < activities.length; j++) {
-              var activity = activities[j];
-              var myDistance = getDistance(me, activity, period);
-              var friendDistance = getDistance(friend, activity, period);
-              if (myDistance > 0 && friendDistance > 0) {
-                if (myDistance > friendDistance) {
-                  notifications.sendNotificationIfReady(me.id, "Keep up the good work! You're beating " + firstName + " in the " + activity + " leaderboard for " + periodMap(period) + ".");
-                  return;
-                } else {
-                  notifications.sendNotificationIfReady(me.id, "Step it up! " + firstName + " is beating you in the " + activity + " leaderboard for " + periodMap(period) + ".");
-                  return;
+            for (var i = 0; i < periods.length; i++) {
+              var period = periods[i];
+              for (var j = 0; j < activities.length; j++) {
+                var activity = activities[j];
+                var myDistance = getDistance(me, activity, period);
+                var friendDistance = getDistance(friend, activity, period);
+                if (myDistance > 0 && friendDistance > 0) {
+                  if (myDistance > friendDistance) {
+                    notifications.sendNotificationIfReady(me.id, "Keep up the good work! You're beating " + firstName + " in the " + activity + " leaderboard for " + periodMap(period) + ".");
+                    return;
+                  } else {
+                    notifications.sendNotificationIfReady(me.id, "Step it up! " + firstName + " is beating you in the " + activity + " leaderboard for " + periodMap(period) + ".");
+                    return;
+                  }
                 }
               }
             }
+          } catch (e) {
+            console.log("Caught Error:", e);
           }
         }
       });
