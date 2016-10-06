@@ -83,7 +83,7 @@ export default class SignUp extends Component {
                                       "id" : result.id,
                                       "friends" : friends,
                                       "name" : result.name,
-                                      "location" : result.location.name
+                                      "location" : (result.location && result.location.name) ? result.location.name : "No Location"
                                     }),
                                     headers: {
                                       'Accept': 'application/json',
